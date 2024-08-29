@@ -1,13 +1,14 @@
+import 'package:cinesphere/main.dart';
 import 'package:flutter/material.dart';
 
-class BookingScreen extends StatelessWidget {
+class MovieDesc_screen extends StatelessWidget {
  String movie;
- BookingScreen({required this.movie});
+ MovieDesc_screen({required this.movie});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF212429),
+      backgroundColor: bg_color,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -62,11 +63,11 @@ class BookingScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: text_color,
                     ),
                   ),
                   Text(
-                    "69h 30min • 2022",
+                    "6h 30min • 2022",
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.white60,
@@ -86,7 +87,6 @@ class BookingScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                         ),
                       )  
-                    
                   ),
                 ],
               ),

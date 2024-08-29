@@ -1,8 +1,9 @@
 
-import 'package:cinesphere/screens/booking_screen.dart';
+import 'package:cinesphere/screens/moviedesc_screen.dart';
 import 'package:flutter/material.dart';
 // ignore: unnecessary_import
 import 'package:flutter/services.dart';
+import 'package:cinesphere/main.dart';
 
 class GradientText extends StatelessWidget {
   final String text;
@@ -31,20 +32,20 @@ class GradientText extends StatelessWidget {
 class HomeScreen extends StatelessWidget{
  List movies = [
   "The Nun II",
-  "Harold and the Purple Crayon"
- 
+  "Harold and the Purple Crayon",
  ];
   
   @override
   Widget build(BuildContext context) {
   return Scaffold(
+    backgroundColor: bg_color,
     appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+        backgroundColor: bg_color,
         elevation: 0,
         title: GradientText(
           text: "CineSphere",
           gradient: LinearGradient(
-            colors: [Color.fromARGB(255, 160, 221, 162), const Color.fromARGB(255, 3, 127, 228)],
+            colors: [Color.fromRGBO(134, 162, 145, 100), Color.fromRGBO(177, 196, 185, 100) , Color.fromRGBO(78, 106, 89, 100)],
             end: Alignment.bottomRight,
           ),
           style: TextStyle(
@@ -65,7 +66,7 @@ class HomeScreen extends StatelessWidget{
                   Text(
                     "Now Playing",
                     style: TextStyle(
-                      color: Colors.white,
+                      color: text_color,
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
@@ -75,9 +76,9 @@ class HomeScreen extends StatelessWidget{
                     child: Text(
                       "View All",
                       style: TextStyle(
-                        color: Color(0xFFF7D300),
+                        color: text_color,
                         fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
@@ -105,7 +106,7 @@ class HomeScreen extends StatelessWidget{
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => BookingScreen(movie: movies[index]),
+                    builder: (context) => MovieDesc_screen(movie: movies[index]),
                   ),
                 );
               },
@@ -121,7 +122,7 @@ class HomeScreen extends StatelessWidget{
                 ),
               ),
             ),
-            SizedBox(height: 8),
+            SizedBox(height: 5),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 8), 
               child: Column(
@@ -132,7 +133,7 @@ class HomeScreen extends StatelessWidget{
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: text_color,
                       overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -162,7 +163,7 @@ class HomeScreen extends StatelessWidget{
                                     ),
                                     SizedBox(width: 5),
                                     Text(
-                                      "69h 3min",
+                                      "6h 3min",
                                       style: TextStyle(
                                         color: Colors.white60,
                                         fontSize: 16,

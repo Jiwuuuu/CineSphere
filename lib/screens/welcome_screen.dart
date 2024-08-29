@@ -1,5 +1,6 @@
 import 'package:cinesphere/screens/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:cinesphere/main.dart';
 
 class GradientText extends StatelessWidget {
   final String text;
@@ -30,7 +31,6 @@ class WelcomeScreen extends StatelessWidget{
     return Material(
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.black,
           image: DecorationImage(
             image: AssetImage("images/welcome.jpeg"),
             fit: BoxFit.cover,
@@ -46,19 +46,19 @@ class WelcomeScreen extends StatelessWidget{
             GradientText(
               text: "CS",
               gradient: LinearGradient(
-                colors: [Color.fromARGB(255, 160, 221, 162), const Color.fromARGB(255, 3, 127, 228)], 
+                colors: [Color.fromRGBO(134, 162, 145, 100), Color.fromRGBO(177, 196, 185, 100) , Color.fromRGBO(78, 106, 89, 100)], 
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               style: TextStyle(
-                fontSize: 70,
+                fontSize: 80,
                 fontWeight: FontWeight.bold,
               ),
             ),
             GradientText(
               text: "CineSphere",
               gradient: LinearGradient(
-                colors: [const Color.fromARGB(255, 160, 221, 162), const Color.fromARGB(255, 3, 127, 228)], 
+                colors: [Color.fromRGBO(134, 162, 145, 100), Color.fromRGBO(177, 196, 185, 100) , Color.fromRGBO(78, 106, 89, 100)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -71,7 +71,7 @@ class WelcomeScreen extends StatelessWidget{
             SizedBox(height: 30),
             Text("Book your Tickets Now!",
             style: TextStyle(
-             color: Colors.white,
+             color: text_color,
              fontSize: 20,
              fontWeight: FontWeight.bold,
             ),
@@ -85,12 +85,12 @@ class WelcomeScreen extends StatelessWidget{
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 15,horizontal: 15),
                 decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 88, 221, 108).withOpacity(0.9),
+                  color: btn1_color,
                     borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text("Get Started",
                 style: TextStyle(
-                  color: Colors.white,
+                  color: text_color,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),),
