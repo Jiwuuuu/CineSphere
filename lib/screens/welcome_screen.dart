@@ -18,7 +18,7 @@ class GradientText extends StatelessWidget {
       shaderCallback: (bounds) => gradient.createShader(bounds),
       child: Text(
         text,
-        style: style.copyWith(color: Colors.white), // Text color is set to white for gradient masking
+        style: style.copyWith(color: Colors.white), 
       ),
     );
   }
@@ -46,7 +46,7 @@ class WelcomeScreen extends StatelessWidget{
             GradientText(
               text: "CS",
               gradient: LinearGradient(
-                colors: [Color.fromARGB(255, 160, 221, 162), const Color.fromARGB(255, 3, 127, 228)], // Green to blue gradient
+                colors: [Color.fromARGB(255, 160, 221, 162), const Color.fromARGB(255, 3, 127, 228)], 
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -58,7 +58,7 @@ class WelcomeScreen extends StatelessWidget{
             GradientText(
               text: "CineSphere",
               gradient: LinearGradient(
-                colors: [const Color.fromARGB(255, 160, 221, 162), const Color.fromARGB(255, 3, 127, 228)], // Green to blue gradient
+                colors: [const Color.fromARGB(255, 160, 221, 162), const Color.fromARGB(255, 3, 127, 228)], 
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),

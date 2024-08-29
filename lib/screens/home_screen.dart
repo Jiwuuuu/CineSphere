@@ -1,6 +1,7 @@
-import 'dart:async';
 
+import 'package:cinesphere/screens/booking_screen.dart';
 import 'package:flutter/material.dart';
+// ignore: unnecessary_import
 import 'package:flutter/services.dart';
 
 class GradientText extends StatelessWidget {
@@ -20,7 +21,7 @@ class GradientText extends StatelessWidget {
       shaderCallback: (bounds) => gradient.createShader(bounds),
       child: Text(
         text,
-        style: style.copyWith(color: Colors.white), // Base color for text is white
+        style: style.copyWith(color: Colors.white), 
       ),
     );
   }
@@ -29,25 +30,10 @@ class GradientText extends StatelessWidget {
 
 class HomeScreen extends StatelessWidget{
  List movies = [
-  "harold",
-  "harold",
-  "harold",
-  "harold",
-  "harold",
-  "harold",
-  "harold",
-  "harold"
+  "The Nun II",
+  "Harold and the Purple Crayon"
  
  ];
-  List movies2  = [
-  "harold",
-  "harold",
-  "harold",
-  "harold",
-  "harold",
-  "harold",
-  "harold"
-  ];
   
   @override
   Widget build(BuildContext context) {
@@ -58,8 +44,7 @@ class HomeScreen extends StatelessWidget{
         title: GradientText(
           text: "CineSphere",
           gradient: LinearGradient(
-            colors: [Colors.green, Colors.blue], // Gradient colors
-            begin: Alignment.topLeft,
+            colors: [Color.fromARGB(255, 160, 221, 162), const Color.fromARGB(255, 3, 127, 228)],
             end: Alignment.bottomRight,
           ),
           style: TextStyle(
@@ -69,10 +54,11 @@ class HomeScreen extends StatelessWidget{
         ),
         centerTitle: true,
       ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -85,59 +71,107 @@ class HomeScreen extends StatelessWidget{
                     ),
                   ),
                   InkWell(
-                    onTap: (){},
+                    onTap: () {},
                     child: Text(
                       "View All",
                       style: TextStyle(
-                      color: Color(0xFFF7D300),
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+                        color: Color(0xFFF7D300),
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
                   ),
                 ],
               ),
-              ),
-             SizedBox(
-              height: 683,
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 0,  
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 0.75,
+            ),
+            SizedBox(
+  height: 683,
+  child: GridView.builder(
+    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 2,
+      crossAxisSpacing: 20, 
+      mainAxisSpacing: 20, 
+      childAspectRatio: 0.6, 
+    ),
+    itemCount: movies.length,
+    itemBuilder: (context, index) {
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 30), 
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BookingScreen(movie: movies[index]),
+                  ),
+                );
+              },
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: Container(
+                  color: Colors.white,
+                  child: Image.asset(
+                    "images/${movies[index]}.jpeg",
+                    fit: BoxFit.cover,
+                    height: 200,
+                  ),
                 ),
-                itemCount: movies.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: EdgeInsets.all(0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(15),
-                            child: Container(
-                              color: Colors.white,
-                              child: Image.asset(
-                                "images/${movies[index]}.jpeg",
-                                fit: BoxFit.cover,
+              ),
+            ),
+            SizedBox(height: 8),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8), 
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    movies[index],
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.star,
+                                      color: Color(0xFFF7D300),
+                                    ),
+                                    Text(
+                                      "4.5",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Color(0xFFF7D300),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.access_time_rounded,
+                                      color: Colors.white60,
+                                      size: 20,
+                                    ),
+                                    SizedBox(width: 5),
+                                    Text(
+                                      "69h 3min",
+                                      style: TextStyle(
+                                        color: Colors.white60,
+                                        fontSize: 16,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
+                            ],
                           ),
-                        ),
-                        SizedBox(height: 8), 
-                        Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 0),
-                        child: Text(
-                          movies[index],
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
                         ),
                       ],
                     ),
@@ -145,10 +179,9 @@ class HomeScreen extends StatelessWidget{
                 },
               ),
             ),
-              
-            ],
-          ),
-          ),
-        );   
+          ],
+        ),
+      ),
+    );
   }
 }
