@@ -18,7 +18,6 @@ class MovieDesc_screen extends StatelessWidget {
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height / 2.2,
                   decoration: BoxDecoration(
-                    color: Colors.black,
                     image: DecorationImage(
                       image: AssetImage("images/${movie}.jpeg"),
                       fit: BoxFit.cover,
