@@ -1,9 +1,36 @@
-import 'package:cinesphere/main.dart';
 import 'package:flutter/material.dart';
+import 'package:cinesphere/main.dart'; // Ensure bg_color and text_color are defined here
+import 'package:cinesphere/favorites_manager.dart'; // Import the new FavoritesManager
 
-class MovieDesc_screen extends StatelessWidget {
- String movie;
- MovieDesc_screen({required this.movie});
+class MovieDescScreen extends StatefulWidget {
+  final String movie;
+
+  MovieDescScreen({required this.movie});
+
+  @override
+  _MovieDescScreenState createState() => _MovieDescScreenState();
+}
+
+class _MovieDescScreenState extends State<MovieDescScreen> {
+  late bool isFavorite;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize isFavorite by checking if the movie is in the favorite list
+    isFavorite = FavoritesManager.instance.isFavorite(widget.movie);
+  }
+
+  void _toggleFavorite() {
+    setState(() {
+      if (isFavorite) {
+        FavoritesManager.instance.removeMovie(widget.movie);
+      } else {
+        FavoritesManager.instance.addMovie(widget.movie);
+      }
+      isFavorite = !isFavorite;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,12 +44,11 @@ class MovieDesc_screen extends StatelessWidget {
                 Container(
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height / 2.2,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("images/${movie}.jpeg"),
-                      fit: BoxFit.cover,
-                      opacity: 0.8,
-                    ),
+                  child: Image.asset(
+                    "images/${widget.movie}.jpeg",
+                    fit: BoxFit.cover, // Adjust the fit as needed
+                    width: double.infinity,
+                    height: double.infinity,
                   ),
                 ),
                 Positioned(
@@ -42,10 +68,13 @@ class MovieDesc_screen extends StatelessWidget {
                           size: 28,
                         ),
                       ),
-                      Icon(
-                        Icons.favorite_outline,
-                        color: Colors.white,
-                        size: 25,
+                      IconButton(
+                        onPressed: _toggleFavorite,
+                        icon: Icon(
+                          isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: Colors.white,
+                          size: 25,
+                        ),
                       ),
                     ],
                   ),
@@ -58,7 +87,7 @@ class MovieDesc_screen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    movie,
+                    widget.movie,
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -67,25 +96,26 @@ class MovieDesc_screen extends StatelessWidget {
                   ),
                   Text(
                     "6h 30min • 2022",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white60,
-                        fontWeight: FontWeight.normal,
-                      ),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white60,
+                      fontWeight: FontWeight.normal,
+                    ),
                   ),
-                Container(
-                padding: EdgeInsets.symmetric(vertical: 8,horizontal: 10),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 51, 57, 52).withOpacity(0.9),
-                    borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text("horror",
-                style: TextStyle(
-                  color: const Color.fromARGB(255, 134, 124, 124),
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                        ),
-                      )  
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 51, 57, 52).withOpacity(0.9),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      "horror",
+                      style: TextStyle(
+                        color: const Color.fromARGB(255, 134, 124, 124),
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ],
               ),
