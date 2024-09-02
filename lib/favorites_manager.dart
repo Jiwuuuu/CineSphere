@@ -33,4 +33,8 @@ class FavoritesManager {
   bool isFavorite(String movie) {
     return _favoriteMovies.contains(movie);
   }
+
+  void removeFavorite(String movie) {}
+
+  void addFavorite(String movie) {}
 }

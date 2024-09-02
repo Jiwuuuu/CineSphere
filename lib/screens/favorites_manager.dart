@@ -1,26 +1,18 @@
-class FavoritesManager {
-  // Private constructor
-  FavoritesManager._privateConstructor();
 
-  // Singleton instance
+class FavoritesManager {
+  // Singleton pattern for managing favorites
+  FavoritesManager._privateConstructor();
   static final FavoritesManager instance = FavoritesManager._privateConstructor();
 
-  // List to store favorite movies
-  final List<String> _favoriteMovies = [];
+  final Set<String> _favorites = <String>{};
 
-  List<String> get favoriteMovies => _favoriteMovies;
+  bool isFavorite(String movieTitle) => _favorites.contains(movieTitle);
 
-  void addMovie(String movie) {
-    if (!_favoriteMovies.contains(movie)) {
-      _favoriteMovies.add(movie);
-    }
+  void addMovie(String movieTitle) {
+    _favorites.add(movieTitle);
   }
 
-  void removeMovie(String movie) {
-    _favoriteMovies.remove(movie);
-  }
-
-  bool isFavorite(String movie) {
-    return _favoriteMovies.contains(movie);
+  void removeMovie(String movieTitle) {
+    _favorites.remove(movieTitle);
   }
 }
