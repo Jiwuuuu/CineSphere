@@ -2,7 +2,7 @@ import 'package:cinesphere/screens/favorites_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cinesphere/screens/movie.dart';
 import 'package:cinesphere/screens/moviedesc_screen.dart';
-import 'package:cinesphere/favorites_manager.dart'; // Make sure this import is correct
+import 'package:cinesphere/favorites_manager.dart';
 
 class GradientText extends StatelessWidget {
   final String text;
@@ -37,7 +37,7 @@ class HomeScreen extends StatelessWidget {
       cast: ["Taissa Farmiga", "Storm Reid"],
       description: "1956 - France. A priest is murdered. An evil is spreading. The sequel to the worldwide smash hit follows Sister Irene as she once again comes face-to-face with Valak, the demon nun.",
       imageUrl: "images/The Nun II.jpeg",
-      trailerUrl: "https://youtu.be/QF-oyCwaArU?feature=shared", // Example trailer URL
+      trailerUrl: "https://youtu.be/QF-oyCwaArU?feature=shared", 
     ),
     Movie(
       title: "Harold and the Purple Crayon",
@@ -47,7 +47,7 @@ class HomeScreen extends StatelessWidget {
       cast: ["Zach Tyler", "Lacey Chabert"],
       description: "Based on the beloved children's book series, this film follows Harold's imaginative adventures.",
       imageUrl: "images/Harold and the Purple Crayon.jpeg",
-      trailerUrl: "https://www.youtube.com/watch?v=trailer_id2", // Example trailer URL
+      trailerUrl: "https://www.youtube.com/watch?v=trailer_id2", 
     ),
     Movie(
       title: "UnHappy For You",
@@ -57,7 +57,7 @@ class HomeScreen extends StatelessWidget {
       cast: ["Emily Blunt", "John Krasinski"],
       description: "A comedy about the trials and tribulations of an overachieving couple.",
       imageUrl: "images/UnHappy For You.jpeg",
-      trailerUrl: "https://www.youtube.com/watch?v=trailer_id3", // Example trailer URL
+      trailerUrl: "https://www.youtube.com/watch?v=trailer_id3", 
     ),
   ];
 
@@ -70,7 +70,7 @@ class HomeScreen extends StatelessWidget {
       cast: ["Anthony Ramos", "Dominique Fishback"],
       description: "The next installment in the Transformers franchise, featuring new characters and explosive action.",
       imageUrl: "images/Transformers One.jpeg",
-      trailerUrl: "https://www.youtube.com/watch?v=trailer_id4", // Example trailer URL
+      trailerUrl: "https://www.youtube.com/watch?v=trailer_id4",
     ),
   ];
 
@@ -337,7 +337,7 @@ class HomeScreen extends StatelessWidget {
         child: Row(
           children: [
             IconButton(
-              icon: Icon(Icons.favorite, color: Colors.white),
+              icon: Icon(Icons.favorite_outline, color: Colors.white),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -349,14 +349,14 @@ class HomeScreen extends StatelessWidget {
             ),
             Spacer(), // Pushes the next button to the center
             IconButton(
-              icon: Icon(Icons.home, color: Colors.white),
+              icon: Icon(Icons.home_outlined, color: Colors.white),
               onPressed: () {
                 Navigator.popUntil(context, ModalRoute.withName('/')); // Navigate to HomeScreen
               },
             ),
             Spacer(), // Pushes the next button to the center
             IconButton(
-              icon: Icon(Icons.notifications, color: Colors.white),
+              icon: Icon(Icons.notifications_outlined, color: Colors.white),
               onPressed: () {
                 // Handle notifications button press
                 // Navigate to NotificationsScreen or show notifications
