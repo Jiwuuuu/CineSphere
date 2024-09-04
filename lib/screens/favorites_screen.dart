@@ -37,6 +37,7 @@ class FavoritesScreen extends StatelessWidget {
               ),
             )
           : ListView.builder(
+            scrollDirection: Axis.vertical,
               itemCount: favoriteMovies.length,
               itemBuilder: (context, index) {
                 final movie = favoriteMovies[index];
@@ -48,7 +49,11 @@ class FavoritesScreen extends StatelessWidget {
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  title: Text(movie),
+                  title: Text(movie,
+                  style: TextStyle(
+                     
+                  ),
+                  ),
                   onTap: () {
                     // Navigate to movie details if needed
                   },
