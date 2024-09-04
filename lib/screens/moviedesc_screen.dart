@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:cinesphere/screens/movie.dart'; 
-import 'package:cinesphere/favorites_manager.dart';
+import 'package:cinesphere/main.dart'; // Ensure bg_color and text_color are defined here
+import 'package:cinesphere/favorites_manager.dart'; // Import the new FavoritesManager
 
 class MovieDescScreen extends StatefulWidget {
-  final Movie movie;
+  final String movie;
 
   MovieDescScreen({required this.movie});
 
@@ -14,204 +13,115 @@ class MovieDescScreen extends StatefulWidget {
 
 class _MovieDescScreenState extends State<MovieDescScreen> {
   late bool isFavorite;
-  bool isDescriptionExpanded = false;
 
   @override
   void initState() {
     super.initState();
-    isFavorite = FavoritesManager.instance.isFavorite(widget.movie.title);
+    // Initialize isFavorite by checking if the movie is in the favorite list
+    isFavorite = FavoritesManager.instance.isFavorite(widget.movie);
   }
 
   void _toggleFavorite() {
     setState(() {
       if (isFavorite) {
-        FavoritesManager.instance.removeMovie(widget.movie.title);
+        FavoritesManager.instance.removeMovie(widget.movie);
       } else {
-        FavoritesManager.instance.addMovie(widget.movie.title);
+        FavoritesManager.instance.addMovie(widget.movie);
       }
       isFavorite = !isFavorite;
     });
   }
 
-  void _toggleDescription() {
-    setState(() {
-      isDescriptionExpanded = !isDescriptionExpanded;
-    });
-  }
-
-  Future<void> _launchTrailer() async {
-    final Uri url = Uri.parse(widget.movie.trailerUrl);
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not launch $url'))
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          // Background Image
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              height: MediaQuery.of(context).size.height / 2.2,
-              child: Image.asset(
-                widget.movie.imageUrl,
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: double.infinity,
-              ),
-            ),
-          ),
-          // Back and Favorite Buttons
-          Positioned(
-            top: 50,
-            left: 10,
-            right: 10,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      backgroundColor: bg_color,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Stack(
               children: [
-                IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
-                    size: 28,
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height / 2.2,
+                  child: Image.asset(
+                    "images/${widget.movie}.jpeg",
+                    fit: BoxFit.cover, // Adjust the fit as needed
+                    width: double.infinity,
+                    height: double.infinity,
                   ),
                 ),
-                IconButton(
-                  onPressed: _toggleFavorite,
-                  icon: Icon(
-                    isFavorite ? Icons.bookmark_add : Icons.bookmark_border,
-                    color: Color.fromARGB(255, 235, 216, 16),
-                    size: 25,
+                Positioned(
+                  top: 50,
+                  left: 10,
+                  right: 10,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Icon(
+                          Icons.arrow_back,
+                          color: Colors.white,
+                          size: 28,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: _toggleFavorite,
+                        icon: Icon(
+                          isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: Colors.white,
+                          size: 25,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
-          ),
-          // Movie Details
-          Positioned(
-            top: MediaQuery.of(context).size.height / 2.2,
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
+            Padding(
               padding: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.6),
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Title
                   Text(
-                    widget.movie.title,
+                    widget.movie,
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: text_color,
                     ),
                   ),
-                  SizedBox(height: 10),
-                  // Genre
                   Text(
-                    widget.movie.genre,
+                    "6h 30min • 2022",
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.white60,
                       fontWeight: FontWeight.normal,
                     ),
                   ),
-                  SizedBox(height: 10),
-                  // Director
-                  Text(
-                    'Director: ${widget.movie.director}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white60,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  // Cast
-                  Text(
-                    'Cast: ${widget.movie.cast.join(', ')}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white60,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  // Description
                   Container(
                     padding: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
                     decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 51, 57, 52).withOpacity(0.9),
+                      color: const Color.fromARGB(255, 51, 57, 52).withOpacity(0.9),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          isDescriptionExpanded 
-                            ? widget.movie.description 
-                            : (widget.movie.description.length > 100 
-                                ? widget.movie.description.substring(0, 100) + '...' 
-                                : widget.movie.description),
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        GestureDetector(
-                          onTap: _toggleDescription,
-                          child: Text(
-                            isDescriptionExpanded ? 'Read Less' : 'Read More',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Color.fromARGB(255, 235, 216, 16),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: _launchTrailer,
-                      child: Text('See Trailer'),
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white, 
-                        backgroundColor: Colors.orange,
-                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                        textStyle: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    child: Text(
+                      "horror",
+                      style: TextStyle(
+                        color: const Color.fromARGB(255, 134, 124, 124),
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
