@@ -1,8 +1,8 @@
-import 'package:cinesphere/screens/favorites_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:cinesphere/screens/movie.dart';
 import 'package:cinesphere/screens/moviedesc_screen.dart';
-import 'package:cinesphere/favorites_manager.dart';
+import 'package:cinesphere/screens/favorites_screen.dart'; // Import your FavoritesScreen
+import 'package:cinesphere/main.dart';
+import 'package:cinesphere/favorites_manager.dart'; // Import the FavoritesManager
 
 class GradientText extends StatelessWidget {
   final String text;
@@ -28,58 +28,22 @@ class GradientText extends StatelessWidget {
 }
 
 class HomeScreen extends StatelessWidget {
-  final List<Movie> nowPlayingMovies = [
-    Movie(
-      title: "The Nun II",
-      genre: "Horror",
-      releaseYear: 2023,
-      director: "Michael Chaves",
-      cast: ["Taissa Farmiga", "Storm Reid"],
-      description: "1956 - France. A priest is murdered. An evil is spreading. The sequel to the worldwide smash hit follows Sister Irene as she once again comes face-to-face with Valak, the demon nun.",
-      imageUrl: "images/The Nun II.jpeg",
-      trailerUrl: "https://youtu.be/QF-oyCwaArU?feature=shared", 
-    ),
-    Movie(
-      title: "Harold and the Purple Crayon",
-      genre: "Animation",
-      releaseYear: 2023,
-      director: "Carla Marsh",
-      cast: ["Zach Tyler", "Lacey Chabert"],
-      description: "Based on the beloved children's book series, this film follows Harold's imaginative adventures.",
-      imageUrl: "images/Harold and the Purple Crayon.jpeg",
-      trailerUrl: "https://www.youtube.com/watch?v=trailer_id2", 
-    ),
-    Movie(
-      title: "UnHappy For You",
-      genre: "Comedy",
-      releaseYear: 2023,
-      director: "George Thomas",
-      cast: ["Emily Blunt", "John Krasinski"],
-      description: "A comedy about the trials and tribulations of an overachieving couple.",
-      imageUrl: "images/UnHappy For You.jpeg",
-      trailerUrl: "https://www.youtube.com/watch?v=trailer_id3", 
-    ),
+  final List<String> nowPlayingMovies = [
+    "The Nun II",
+    "Harold and the Purple Crayon",
+    "UnHappy For You"
   ];
 
-  final List<Movie> upcomingMovies = [
-    Movie(
-      title: "Transformers One",
-      genre: "Action",
-      releaseYear: 2024,
-      director: "Steven Caple Jr.",
-      cast: ["Anthony Ramos", "Dominique Fishback"],
-      description: "The next installment in the Transformers franchise, featuring new characters and explosive action.",
-      imageUrl: "images/Transformers One.jpeg",
-      trailerUrl: "https://www.youtube.com/watch?v=trailer_id4",
-    ),
+  final List<String> upcomingMovies = [
+    "Transformers One",
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: bg_color,
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: bg_color,
         elevation: 0,
         title: GradientText(
           text: "CineSphere",
@@ -109,7 +73,7 @@ class HomeScreen extends StatelessWidget {
                   Text(
                     "Now Showing",
                     style: TextStyle(
-                      color: Colors.white,
+                      color: text_color,
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
@@ -144,7 +108,7 @@ class HomeScreen extends StatelessWidget {
                             child: Container(
                               color: Colors.white,
                               child: Image.asset(
-                                nowPlayingMovies[index].imageUrl,
+                                "images/${nowPlayingMovies[index]}.jpeg",
                                 fit: BoxFit.cover,
                                 height: 200,
                                 width: 150,
@@ -163,7 +127,7 @@ class HomeScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  nowPlayingMovies[index].title,
+                                  nowPlayingMovies[index],
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -223,7 +187,7 @@ class HomeScreen extends StatelessWidget {
                   Text(
                     "Upcoming Movies",
                     style: TextStyle(
-                      color: Colors.white,
+                      color: text_color,
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
@@ -249,6 +213,7 @@ class HomeScreen extends StatelessWidget {
                               MaterialPageRoute(
                                 builder: (context) => MovieDescScreen(
                                   movie: upcomingMovies[index],
+
                                 ),
                               ),
                             );
@@ -258,7 +223,7 @@ class HomeScreen extends StatelessWidget {
                             child: Container(
                               color: Colors.white,
                               child: Image.asset(
-                                upcomingMovies[index].imageUrl,
+                                "images/${upcomingMovies[index]}.jpeg",
                                 fit: BoxFit.cover,
                                 height: 200,
                                 width: 150,
@@ -277,7 +242,7 @@ class HomeScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  upcomingMovies[index].title,
+                                  upcomingMovies[index],
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -337,7 +302,7 @@ class HomeScreen extends StatelessWidget {
         child: Row(
           children: [
             IconButton(
-              icon: Icon(Icons.favorite_outline, color: Colors.white),
+              icon: Icon(Icons.favorite, color: Colors.white),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -349,20 +314,20 @@ class HomeScreen extends StatelessWidget {
             ),
             Spacer(), // Pushes the next button to the center
             IconButton(
-              icon: Icon(Icons.home_outlined, color: Colors.white),
+              icon: Icon(Icons.home, color: Colors.white),
               onPressed: () {
                 Navigator.popUntil(context, ModalRoute.withName('/')); // Navigate to HomeScreen
               },
             ),
             Spacer(), // Pushes the next button to the center
             IconButton(
-              icon: Icon(Icons.notifications_outlined, color: Colors.white),
+              icon: Icon(Icons.notifications, color: Colors.white),
               onPressed: () {
                 // Handle notifications button press
                 // Navigate to NotificationsScreen or show notifications
               },
             ),
-          ]
+          ],
         ),
       ),
     );
