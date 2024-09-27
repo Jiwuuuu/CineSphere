@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:cinesphere/screens/home_screen.dart'; // Import your HomeScreen
+import 'package:cinesphere/screens/home_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -73,6 +73,19 @@ class _WelcomeManagerState extends State<WelcomeManager> {
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(child: _buildWelcomeScreen()),
+          _buildDots(),
+          SizedBox(height: 10), // Reduced height here for closer placement
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWelcomeScreen() {
     switch (_currentScreen) {
       case 0:
         return WelcomeScreen1(onNext: _nextScreen);
@@ -81,8 +94,25 @@ class _WelcomeManagerState extends State<WelcomeManager> {
       case 2:
         return WelcomeScreen3(onNext: _nextScreen);
       default:
-        return HomeScreen(); // Fallback
+        return HomeScreen();
     }
+  }
+
+  Widget _buildDots() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(3, (index) {
+        return Container(
+          margin: EdgeInsets.symmetric(horizontal: 5),
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: _currentScreen == index ? Color.fromARGB(255, 57, 197, 92) : Colors.grey,
+          ),
+        );
+      }),
+    );
   }
 }
 
@@ -93,27 +123,52 @@ class WelcomeScreen1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('images/welcome.jpeg'),
-            fit: BoxFit.cover,
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('images/welcome.jpeg'),
+              fit: BoxFit.cover,
+            ),
           ),
         ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Welcome to", style: TextStyle(fontSize: 24, color: Colors.white)),
-              Text("CineSphere", style: TextStyle(fontSize: 30, color: const Color.fromARGB(255, 57, 197, 92))),
-              Text("Your go-to movie ticket app.", style: TextStyle(fontSize: 30, color: Colors.white)),
-              SizedBox(height: 20),
-              ElevatedButton(onPressed: onNext, child: Text("Next")),
-            ],
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.black.withOpacity(0.1),
+                Colors.transparent,
+              ],
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+            ),
           ),
         ),
-      ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(height: 400), // Adjust this as needed
+            Text("Welcome to", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
+            Text("CineSphere", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 57, 197, 92))),
+            Text("Your go-to movie ticket app.", style: TextStyle(fontSize: 14, color: Colors.white)),
+            Spacer(),
+            ElevatedButton(
+              onPressed: onNext,
+              child: Text("Next", style: TextStyle(color: Colors.black)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color.fromARGB(255, 57, 197, 92),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+              ),
+            ),
+            SizedBox(height: 300), // Reduced space before the dots
+          ],
+        ),
+      ],
     );
   }
 }
@@ -125,26 +180,51 @@ class WelcomeScreen2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('images/The Nun II.jpeg'),
-            fit: BoxFit.cover,
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('images/The Nun II.jpeg'),
+              fit: BoxFit.cover,
+            ),
           ),
         ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Browse & Book Fast", style: TextStyle(fontSize: 24, color: Colors.white)),
-              Text("Find movies, check times, book instantly.", style: TextStyle(fontSize: 24, color: Colors.white)),
-              SizedBox(height: 20),
-              ElevatedButton(onPressed: onNext, child: Text("Next")),
-            ],
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.black.withOpacity(0.7),
+                Colors.transparent,
+              ],
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+            ),
           ),
         ),
-      ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(height: 400), // Adjust this as needed
+            Text("Browse & Book Fast", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 57, 197, 92))),
+            Text("Find movies, check times, book instantly.", style: TextStyle(fontSize: 14, color: Colors.white)),
+            Spacer(),
+            ElevatedButton(
+              onPressed: onNext,
+              child: Text("Next", style: TextStyle(color: Colors.black)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color.fromARGB(255, 57, 197, 92),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+              ),
+            ),
+            SizedBox(height: 300), // Reduced space before the dots
+          ],
+        ),
+      ],
     );
   }
 }
@@ -156,26 +236,51 @@ class WelcomeScreen3 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('images/Transformers One.jpeg'),
-            fit: BoxFit.cover,
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('images/Transformers One.jpeg'),
+              fit: BoxFit.cover,
+            ),
           ),
         ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Secure Payments", style: TextStyle(fontSize: 24, color: Colors.white)),
-              Text("Pay quickly and safely.", style: TextStyle(fontSize: 30, color: Colors.white)),
-              SizedBox(height: 20),
-              ElevatedButton(onPressed: onNext, child: Text("Get Started")),
-            ],
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.black.withOpacity(0.7),
+                Colors.transparent,
+              ],
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+            ),
           ),
         ),
-      ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(height: 00), // Adjust this as needed
+            Text("Secure Payments", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 57, 197, 92))),
+            Text("Pay quickly and safely.", style: TextStyle(fontSize: 14, color: Colors.white)),
+            Spacer(),
+            ElevatedButton(
+              onPressed: onNext,
+              child: Text("Get Started", style: TextStyle(color: Colors.black)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color.fromARGB(255, 57, 197, 92),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+              ),
+            ),
+            SizedBox(height: 300), // Reduced space before the dots
+          ],
+        ),
+      ],
     );
   }
 }

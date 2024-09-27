@@ -122,48 +122,12 @@ class _MovieDescScreenState extends State<MovieDescScreen> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: const Color.fromARGB(255, 147, 235, 136),
                     ),
                   ),
                   SizedBox(height: 10),
-                  // Genre
-                  Text(
-                    widget.movie.genre,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white60,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  // Director
-                  Text(
-                    'Director: ${widget.movie.director}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white60,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  // Cast
-                  Text(
-                    'Cast: ${widget.movie.cast.join(', ')}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white60,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  // Description
-                  Container(
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-                    decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 51, 57, 52).withOpacity(0.9),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
+                  //Description
+                  Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
@@ -191,8 +155,94 @@ class _MovieDescScreenState extends State<MovieDescScreen> {
                         ),
                       ],
                     ),
-                  ),
-                  SizedBox(height: 20),
+                  // Genre
+                  Row(
+  children: [
+    Text(
+      'Genre: ',
+      style: TextStyle(
+        fontSize: 14,
+        color: const Color.fromARGB(255, 147, 235, 136), // Color for the label
+        fontWeight: FontWeight.normal,
+      ),
+    ),
+    Text(
+      widget.movie.genre,
+      style: TextStyle(
+        fontSize: 14,
+        color: const Color.fromARGB(255, 255, 255, 255), // Different color for the genre
+        fontWeight: FontWeight.normal,
+      ),
+    ),
+  ],
+),
+                  SizedBox(height: 10),
+                  // Director
+                  Row(
+  children: [
+    Text(
+      'Director: ',
+      style: TextStyle(
+        fontSize: 14,
+        color: const Color.fromARGB(255, 147, 235, 136), // Color for the label
+        fontWeight: FontWeight.normal,
+      ),
+    ),
+    Text(
+      widget.movie.director,
+      style: TextStyle(
+        fontSize: 14,
+        color: const Color.fromARGB(255, 255, 255, 255), // Different color for the genre
+        fontWeight: FontWeight.normal,
+      ),
+    ),
+  ],
+),
+                  SizedBox(height: 10),
+                  // Cast
+                  Row(
+  children: [
+    Text(
+      'Cast: ',
+      style: TextStyle(
+        fontSize: 14,
+        color: const Color.fromARGB(255, 147, 235, 136), // Color for the label
+        fontWeight: FontWeight.normal,
+      ),
+    ),
+    Text(
+      widget.movie.cast.join(', '),
+      style: TextStyle(
+        fontSize: 14,
+        color: const Color.fromARGB(255, 255, 255, 255), // Different color for the genre
+        fontWeight: FontWeight.normal,
+      ),
+    ),
+  ],
+),
+                  SizedBox(height: 10),
+                  //rating
+                  Row(
+  children: [
+    Text(
+      'MTRCB Rating: ',
+      style: TextStyle(
+        fontSize: 14,
+        color: const Color.fromARGB(255, 147, 235, 136), // Color for the label
+        fontWeight: FontWeight.normal,
+      ),
+    ),
+    Text(
+      widget.movie.MTRCBrating,
+      style: TextStyle(
+        fontSize: 14,
+        color: const Color.fromARGB(255, 255, 255, 255), // Different color for the genre
+        fontWeight: FontWeight.normal,
+      ),
+    ),
+  ],
+),
+                  SizedBox(height: 10),
                   // Buttons Row
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -216,7 +266,7 @@ class _MovieDescScreenState extends State<MovieDescScreen> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => BookingScreen()),
+                            MaterialPageRoute(builder: (context) => BookingScreen(movie: widget.movie)),
                           );
                         },
                         child: Container(
@@ -237,7 +287,7 @@ class _MovieDescScreenState extends State<MovieDescScreen> {
                       ),
                     ],
                   ),
-                ],
+                ]
               ),
             ),
           ),
