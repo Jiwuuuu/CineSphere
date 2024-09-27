@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:cinesphere/screens/movie.dart'; 
+import 'package:cinesphere/screens/movie.dart';
 import 'package:cinesphere/favorites_manager.dart';
+import 'package:cinesphere/screens/booking.dart';
 
 class MovieDescScreen extends StatefulWidget {
   final Movie movie;
@@ -45,7 +46,7 @@ class _MovieDescScreenState extends State<MovieDescScreen> {
       await launchUrl(url);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not launch $url'))
+        SnackBar(content: Text('Could not launch $url')),
       );
     }
   }
@@ -121,55 +122,19 @@ class _MovieDescScreenState extends State<MovieDescScreen> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: const Color.fromARGB(255, 147, 235, 136),
                     ),
                   ),
                   SizedBox(height: 10),
-                  // Genre
-                  Text(
-                    widget.movie.genre,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white60,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  // Director
-                  Text(
-                    'Director: ${widget.movie.director}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white60,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  // Cast
-                  Text(
-                    'Cast: ${widget.movie.cast.join(', ')}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white60,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  // Description
-                  Container(
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-                    decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 51, 57, 52).withOpacity(0.9),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
+                  //Description
+                  Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          isDescriptionExpanded 
-                            ? widget.movie.description 
-                            : (widget.movie.description.length > 100 
-                                ? widget.movie.description.substring(0, 100) + '...' 
+                          isDescriptionExpanded
+                            ? widget.movie.description
+                            : (widget.movie.description.length > 100
+                                ? widget.movie.description.substring(0, 100) + '...'
                                 : widget.movie.description),
                           style: TextStyle(
                             fontSize: 16,
@@ -190,24 +155,139 @@ class _MovieDescScreenState extends State<MovieDescScreen> {
                         ),
                       ],
                     ),
-                  ),
-                  SizedBox(height: 20),
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: _launchTrailer,
-                      child: Text('See Trailer'),
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white, 
-                        backgroundColor: Colors.orange,
-                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                        textStyle: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                  // Genre
+                  Row(
+  children: [
+    Text(
+      'Genre: ',
+      style: TextStyle(
+        fontSize: 14,
+        color: const Color.fromARGB(255, 147, 235, 136), // Color for the label
+        fontWeight: FontWeight.normal,
+      ),
+    ),
+    Text(
+      widget.movie.genre,
+      style: TextStyle(
+        fontSize: 14,
+        color: const Color.fromARGB(255, 255, 255, 255), // Different color for the genre
+        fontWeight: FontWeight.normal,
+      ),
+    ),
+  ],
+),
+                  SizedBox(height: 10),
+                  // Director
+                  Row(
+  children: [
+    Text(
+      'Director: ',
+      style: TextStyle(
+        fontSize: 14,
+        color: const Color.fromARGB(255, 147, 235, 136), // Color for the label
+        fontWeight: FontWeight.normal,
+      ),
+    ),
+    Text(
+      widget.movie.director,
+      style: TextStyle(
+        fontSize: 14,
+        color: const Color.fromARGB(255, 255, 255, 255), // Different color for the genre
+        fontWeight: FontWeight.normal,
+      ),
+    ),
+  ],
+),
+                  SizedBox(height: 10),
+                  // Cast
+                  Row(
+  children: [
+    Text(
+      'Cast: ',
+      style: TextStyle(
+        fontSize: 14,
+        color: const Color.fromARGB(255, 147, 235, 136), // Color for the label
+        fontWeight: FontWeight.normal,
+      ),
+    ),
+    Text(
+      widget.movie.cast.join(', '),
+      style: TextStyle(
+        fontSize: 14,
+        color: const Color.fromARGB(255, 255, 255, 255), // Different color for the genre
+        fontWeight: FontWeight.normal,
+      ),
+    ),
+  ],
+),
+                  SizedBox(height: 10),
+                  //rating
+                  Row(
+  children: [
+    Text(
+      'MTRCB Rating: ',
+      style: TextStyle(
+        fontSize: 14,
+        color: const Color.fromARGB(255, 147, 235, 136), // Color for the label
+        fontWeight: FontWeight.normal,
+      ),
+    ),
+    Text(
+      widget.movie.MTRCBrating,
+      style: TextStyle(
+        fontSize: 14,
+        color: const Color.fromARGB(255, 255, 255, 255), // Different color for the genre
+        fontWeight: FontWeight.normal,
+      ),
+    ),
+  ],
+),
+                  SizedBox(height: 10),
+                  // Buttons Row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // See Trailer Button
+                      ElevatedButton(
+                        onPressed: _launchTrailer,
+                        child: Text('See Trailer'),
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.orange,
+                          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                          textStyle: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    ),
+                      // Book Now Button
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => BookingScreen(movie: widget.movie)),
+                          );
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                          decoration: BoxDecoration(
+                            color: Color.fromARGB(255, 51, 57, 52), // Example color
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            "Book Now",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ]
               ),
             ),
           ),
