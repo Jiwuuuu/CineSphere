@@ -2,7 +2,7 @@ import 'package:cinesphere/screens/favorites_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cinesphere/screens/movie.dart';
 import 'package:cinesphere/screens/moviedesc_screen.dart';
-import 'package:cinesphere/favorites_manager.dart';
+
 
 class GradientText extends StatelessWidget {
   final String text;

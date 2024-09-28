@@ -1,7 +1,9 @@
+import 'package:cinesphere/main.dart'; 
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cinesphere/screens/movie.dart'; 
 import 'package:cinesphere/favorites_manager.dart';
+// Import your payment screen
 
 class MovieDescScreen extends StatefulWidget {
   final Movie movie;
@@ -45,9 +47,19 @@ class _MovieDescScreenState extends State<MovieDescScreen> {
       await launchUrl(url);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not launch $url'))
+        SnackBar(content: Text('Could not launch $url')),
       );
     }
+  }
+
+  void _navigateToPayment() {
+    // Navigate to the payment screen
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PaymentScreen(), // Navigate to PaymentScreen
+      ),
+    );
   }
 
   @override
@@ -196,6 +208,22 @@ class _MovieDescScreenState extends State<MovieDescScreen> {
                     child: ElevatedButton(
                       onPressed: _launchTrailer,
                       child: Text('See Trailer'),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white, 
+                        backgroundColor: Colors.orange,
+                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                        textStyle: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: _navigateToPayment, // Call the function to navigate to payment
+                      child: Text('Pay Now'),
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white, 
                         backgroundColor: Colors.orange,
