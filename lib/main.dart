@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cinesphere/screens/home_screen.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart'; // Keep the import for in-app web view
-import 'Paymongo.dart'; // Keep the import for PayMongo service
-import 'package:cinesphere/screens/welcome_screen.dart'; // Ensure this path is correct
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'Paymongo.dart'; // Your PayMongo servic
 
 // Colors
 const bg_color = Color(0xff0D110F);
