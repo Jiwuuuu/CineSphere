@@ -1,3 +1,4 @@
+import 'package:cinesphere/main.dart';
 import 'package:cinesphere/screens/movie.dart';
 import 'package:flutter/material.dart';
 
@@ -24,11 +25,17 @@ class BookingScreen extends StatelessWidget {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Add booking functionality here
+                // Navigate to the PaymentScreen when the button is pressed
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => PaymentScreen(), // You can pass any needed parameters here
+                  ),
+                );
               },
               child: Text('Confirm Booking'),
               style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white, backgroundColor: Colors.orange,
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.orange,
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               ),
             ),

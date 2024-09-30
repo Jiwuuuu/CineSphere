@@ -234,7 +234,7 @@ class _MovieDescScreenState extends State<MovieDescScreen> {
                         ),
                       ),
                       Text(
-                        widget.movie.MTRCBrating as String,
+                        widget.movie.MTRCBrating,
                         style: TextStyle(
                           fontSize: 14,
                           color: const Color.fromARGB(255, 255, 255, 255),

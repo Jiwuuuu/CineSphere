@@ -1,4 +1,3 @@
-import 'package:cinesphere/favorites_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:cinesphere/screens/movie.dart'; // Ensure this is correctly defined
 import 'package:cinesphere/screens/moviedesc_screen.dart'; // Ensure this is correctly defined
