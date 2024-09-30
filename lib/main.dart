@@ -262,7 +262,7 @@ class WelcomeScreen3 extends StatelessWidget {
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: 00), // Adjust this as needed
+            SizedBox(height: 450), // Adjust this as needed
             Text("Secure Payments", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 57, 197, 92))),
             Text("Pay quickly and safely.", style: TextStyle(fontSize: 14, color: Colors.white)),
             Spacer(),

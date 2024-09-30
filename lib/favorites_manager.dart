@@ -26,4 +26,9 @@ class FavoritesManager {
   bool isFavorite(String title) {
     return _favorites.contains(title);
   }
+
+  // Add this method
+  void addMovieToFavorites(String title) {
+    addMovie(title); // You can call the existing addMovie method if it does the same thing
+  }
 }

@@ -1,3 +1,4 @@
+import 'package:cinesphere/favorites_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:cinesphere/screens/movie.dart'; // Ensure this is correctly defined
 import 'package:cinesphere/screens/moviedesc_screen.dart'; // Ensure this is correctly defined
@@ -148,7 +149,7 @@ class HomeScreen extends StatelessWidget {
     // Add more movies here as per your requirement
   ];
 
-  @override
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
@@ -168,7 +169,7 @@ class HomeScreen extends StatelessWidget {
             SizedBox(width: 10),
             Expanded(
               child: TextField(
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0)),
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 15),
                   filled: true,
@@ -205,7 +206,6 @@ class HomeScreen extends StatelessWidget {
             IconButton(
               icon: Icon(Icons.favorite_outline, color: Colors.white),
               onPressed: () {
-                // Navigate to favorites screen
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -217,7 +217,7 @@ class HomeScreen extends StatelessWidget {
             IconButton(
               icon: Icon(Icons.home_outlined, color: Colors.white),
               onPressed: () {
-                // Navigate to home screen
+                // No need to push, just refresh the current screen
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
@@ -239,83 +239,94 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildCategorySection(String title, List<Movie> movies, BuildContext context) {
-  return Padding(
-    padding: const EdgeInsets.only(left: 15, top: 15),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: TextStyle(
-            color: Color.fromRGBO(141, 232, 171, 1),
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
+    return Padding(
+      padding: const EdgeInsets.only(left: 15, top: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              color: Color.fromRGBO(141, 232, 171, 1),
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        SizedBox(height: 15),
-        SizedBox(
-          height: 250,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: movies.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(right: 15),
-                child: GestureDetector(
-                  onTap: () {
-                    // Navigate to movie description screen
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MovieDescScreen(movie: movies[index]),
+          SizedBox(height: 15),
+          SizedBox(
+            height: 250,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: movies.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: 15),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MovieDescScreen(movie: movies[index]),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: 120,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.asset(
+                              movies[index].imageUrl,
+                              height: 180,
+                              width: 120,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            movies[index].title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            movies[index].genre,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 12,
+                            ),
+                          ),
+                          IconButton(
+  icon: Icon(Icons.favorite_outline, color: Colors.white),
+  onPressed: () {
+    FavoritesManager().addMovieToFavorites(movies[index] as String); // Now correctly uses the singleton instance
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('${movies[index].title} added to favorites!'),
+      ),
+    );
+  },
+),
+
+                        ],
                       ),
-                    );
-                  },
-                  child: Container(
-                    width: 120, // Fixed width to prevent unnecessary space
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.asset(
-                            movies[index].imageUrl,
-                            height: 180,
-                            width: 120,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          movies[index].title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        SizedBox(height: 4), // Add some spacing for clarity
-                        Text(
-                          movies[index].genre,
-                          maxLines: 1, // Limit to 1 line
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 12, // Slightly smaller font size
-                          ),
-                        ),                      
-                      ],
                     ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 }
