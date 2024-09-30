@@ -1,13 +1,13 @@
 class Movie {
   final String title;
   final String genre;
-  final int releaseYear;
+  final String releaseYear;
   final String director;
   final List<String> cast;
+  final String MTRCBrating;
   final String description;
   final String imageUrl;
   final String trailerUrl;
-  final double MTRCBrating; // Assuming it's a double
 
   Movie({
     required this.title,
@@ -15,9 +15,19 @@ class Movie {
     required this.releaseYear,
     required this.director,
     required this.cast,
+    required this.MTRCBrating,
     required this.description,
     required this.imageUrl,
     required this.trailerUrl,
-    required this.MTRCBrating, // Required parameter
   });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Movie &&
+          runtimeType == other.runtimeType &&
+          title == other.title; // Change this based on your equality criteria
+
+  @override
+  int get hashCode => title.hashCode; // Change this based on your equality criteria
 }
