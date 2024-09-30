@@ -24,16 +24,15 @@ class _MovieDescScreenState extends State<MovieDescScreen> {
   }
 
   void _toggleFavorite() {
-  setState(() {
-    if (isFavorite) {
-      FavoritesManager().removeMovie(widget.movie.title); // Use the existing method
-    } else {
-      FavoritesManager().addMovie(widget.movie.title); // Use the existing method
-    }
-    isFavorite = !isFavorite;
-  });
-}
-
+    setState(() {
+      if (isFavorite) {
+        FavoritesManager.instance.removeMovie(widget.movie.title);
+      } else {
+        FavoritesManager.instance.addMovie(widget.movie.title);
+      }
+      isFavorite = !isFavorite;
+    });
+  }
 
   void _toggleDescription() {
     setState(() {
@@ -133,10 +132,10 @@ class _MovieDescScreenState extends State<MovieDescScreen> {
                     children: [
                       Text(
                         isDescriptionExpanded
-                            ? widget.movie.description
-                            : (widget.movie.description.length > 100
-                                ? widget.movie.description.substring(0, 100) + '...'
-                                : widget.movie.description),
+                          ? widget.movie.description
+                          : (widget.movie.description.length > 100
+                              ? widget.movie.description.substring(0, 100) + '...'
+                              : widget.movie.description),
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.white,
@@ -156,17 +155,94 @@ class _MovieDescScreenState extends State<MovieDescScreen> {
                       ),
                     ],
                   ),
+                  SizedBox(height: 10),
                   // Genre
-                  _buildDetailRow('Genre:', widget.movie.genre),
+                  Row(
+                    children: [
+                      Text(
+                        'Genre: ',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: const Color.fromARGB(255, 147, 235, 136),
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                      Text(
+                        widget.movie.genre,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: const Color.fromARGB(255, 255, 255, 255),
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                    ],
+                  ),
                   SizedBox(height: 10),
                   // Director
-                  _buildDetailRow('Director:', widget.movie.director),
+                  Row(
+                    children: [
+                      Text(
+                        'Director: ',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: const Color.fromARGB(255, 147, 235, 136),
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                      Text(
+                        widget.movie.director,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: const Color.fromARGB(255, 255, 255, 255),
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                    ],
+                  ),
                   SizedBox(height: 10),
                   // Cast
-                  _buildDetailRow('Cast:', widget.movie.cast.join(', ')),
+                  Row(
+                    children: [
+                      Text(
+                        'Cast: ',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: const Color.fromARGB(255, 147, 235, 136),
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                      Text(
+                        widget.movie.cast.join(', '),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: const Color.fromARGB(255, 255, 255, 255),
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                    ],
+                  ),
                   SizedBox(height: 10),
-                  // Rating
-                  _buildDetailRow('MTRCB Rating:', widget.movie.MTRCBrating),
+                  // MTRCB Rating
+                  Row(
+                    children: [
+                      Text(
+                        'MTRCB Rating: ',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: const Color.fromARGB(255, 147, 235, 136),
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                      Text(
+                        widget.movie.MTRCBrating,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: const Color.fromARGB(255, 255, 255, 255),
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                    ],
+                  ),
                   SizedBox(height: 10),
                   // Buttons Row
                   Row(
@@ -218,30 +294,6 @@ class _MovieDescScreenState extends State<MovieDescScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildDetailRow(String label, String value) {
-    return Row(
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            color: const Color.fromARGB(255, 147, 235, 136),
-            fontWeight: FontWeight.normal,
-          ),
-        ),
-        SizedBox(width: 4),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 14,
-            color: const Color.fromARGB(255, 255, 255, 255),
-            fontWeight: FontWeight.normal,
-          ),
-        ),
-      ],
     );
   }
 }

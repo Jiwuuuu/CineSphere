@@ -35,7 +35,7 @@ class HomeScreen extends StatelessWidget {
       director: "JUNSOO PARK",
       cast: ["JUNG KOOK"],
       MTRCBrating: "PG",
-      description: "I just follow my own compass.” Jung Kook of BTS, the '21st Century Pop Artist,' ascended to global stardom with his debut solo single 'Seven (feat. Latto)' in July 2023. Achieving unprecedented success, Jung Kook became the first Asian solo artist to top the Billboard HOT 100, Global 200, and Global 200 Excl. US charts. His singles 'Seven,' '3D (feat. Jack Harlow),' and 'Standing Next to You' all reached the top 10 of the Billboard HOT 100, making him the only K-pop solo artist to achieve this feat. His album ‘GOLDEN’ also made history by staying onthe Billboard 200 for 24 consecutive weeks. Through exclusive, unseen interviews and behind-the-scenes footage, alongside electrifying concert performances, this brand new film showcases Jung Kook’s eight-month journey, capturing his unwavering dedication and growth. Join Jung Kook as he shares his remarkable rise to fame and heartfelt moments with ARMY around the world in 'JUNG KOOK: I AM STILL'.",
+      description: "I just follow my own compass.” Jung Kook of BTS, the '21st Century Pop Artist,' ascended to global stardom with his debut solo single 'Seven (feat. Latto)' in July 2023. Achieving unprecedented success, Jung Kook became the first Asian solo artist to top the Billboard HOT 100, Global 200, and Global 200 Excl. US charts. His singles 'Seven,' '3D (feat. Jack Harlow),' and 'Standing Next to You' all reached the top 10 of the Billboard HOT 100, making him the only K-pop solo artist to achieve this feat. His album ‘GOLDEN’ also made history by staying on the Billboard 200 for 24 consecutive weeks. Through exclusive, unseen interviews and behind-the-scenes footage, alongside electrifying concert performances, this brand new film showcases Jung Kook’s eight-month journey, capturing his unwavering dedication and growth. Join Jung Kook as he shares his remarkable rise to fame and heartfelt moments with ARMY around the world in 'JUNG KOOK: I AM STILL'.",
       imageUrl: "images/I AM STILL.jpeg",
       trailerUrl: "https://youtu.be/T6iQnnHNF50",  
     ),
@@ -143,189 +143,98 @@ class HomeScreen extends StatelessWidget {
       cast: ["Benedict Wong, Callina Liang, Jabari Banks"],
       MTRCBrating: "PG",
       description: "A group of seniors of an entrepreneurial high school team up to take down a rigged college admissions system.",
-      imageUrl: "images/BAD GENIUS (2024).jpeg",
-      trailerUrl: "https://youtu.be/HqKJvvpeuAY", 
+      imageUrl: "images/BAD GENIUS 2024.jpeg",
+      trailerUrl: "https://www.youtube.com/watch?v=trailer_id3", 
     ),
     // Add more movies here as per your requirement
   ];
 
-   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        elevation: 0,
-        title: Row(
-          children: [
-            Text(
-              "CS",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                fontSize: 20,
-              ),
-            ),
-            SizedBox(width: 10),
-            Expanded(
-              child: TextField(
-                style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0)),
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 15),
-                  filled: true,
-                  fillColor: const Color.fromARGB(255, 255, 255, 255),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide.none,
-                  ),
-                  hintText: 'Search',
-                  hintStyle: TextStyle(color: const Color.fromARGB(255, 50, 48, 48)),
-                  prefixIcon: Icon(Icons.search, color: const Color.fromARGB(255, 0, 0, 0)),
-                ),
-              ),
-            ),
-          ],
-        ),
-        centerTitle: true,
+        title: Text("CineSphere"),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.favorite),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => FavoritesScreen()),
+              );
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildCategorySection("Now Showing", nowPlayingMovies, context),
-            _buildCategorySection("Advance Selling", advanceSellingMovies, context),
-            _buildCategorySection("Coming Soon", upcomingMovies, context),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.black,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            IconButton(
-              icon: Icon(Icons.favorite_outline, color: Colors.white),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => FavoritesScreen(),
-                  ),
-                );
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.home_outlined, color: Colors.white),
-              onPressed: () {
-                // No need to push, just refresh the current screen
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => HomeScreen(),
-                  ),
-                );
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.notifications_outlined, color: Colors.white),
-              onPressed: () {
-                // Implement notifications functionality if needed
-              },
-            ),
+            SectionTitle(title: "Now Playing"),
+            MovieList(movies: nowPlayingMovies),
+            SectionTitle(title: "Upcoming Movies"),
+            MovieList(movies: upcomingMovies),
+            SectionTitle(title: "Advance Selling Movies"),
+            MovieList(movies: advanceSellingMovies),
           ],
         ),
       ),
     );
   }
+}
 
-  Widget _buildCategorySection(String title, List<Movie> movies, BuildContext context) {
+class SectionTitle extends StatelessWidget {
+  final String title;
+
+  SectionTitle({required this.title});
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 15, top: 15),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              color: Color.fromRGBO(141, 232, 171, 1),
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 15),
-          SizedBox(
-            height: 250,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: movies.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.only(right: 15),
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MovieDescScreen(movie: movies[index]),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      width: 120,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.asset(
-                              movies[index].imageUrl,
-                              height: 180,
-                              width: 120,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            movies[index].title,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            movies[index].genre,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 12,
-                            ),
-                          ),
-                          IconButton(
-  icon: Icon(Icons.favorite_outline, color: Colors.white),
-  onPressed: () {
-    FavoritesManager().addMovieToFavorites(movies[index] as String); // Now correctly uses the singleton instance
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${movies[index].title} added to favorites!'),
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: Text(
+        title,
+        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
       ),
     );
-  },
-),
+  }
+}
 
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
+class MovieList extends StatelessWidget {
+  final List<Movie> movies;
+
+  MovieList({required this.movies});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 250,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: movies.length,
+        itemBuilder: (context, index) {
+          final movie = movies[index];
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MovieDescScreen(movie: movie),
+                ),
+              );
+            },
+            child: Container(
+              width: 150,
+              margin: EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                image: DecorationImage(
+                  image: AssetImage(movie.imageUrl),
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
