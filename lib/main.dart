@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cinesphere/screens/home_screen.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'Paymongo.dart'; // Your PayMongo service
+import 'package:flutter_inappwebview/flutter_inappwebview.dart'; // Keep the import for in-app web view
+import 'Paymongo.dart'; // Keep the import for PayMongo service
 import 'package:cinesphere/screens/welcome_screen.dart'; // Ensure this path is correct
 
 // Colors
@@ -57,8 +57,7 @@ class SplashScreen extends StatelessWidget {
       body: Center(
         child: Text(
           "Splash Screen",
-          style: TextStyle(
-              fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
+          style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
         ),
       ),
     );
@@ -122,9 +121,7 @@ class _WelcomeManagerState extends State<WelcomeManager> {
           height: 8,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: _currentScreen == index
-                ? const Color.fromARGB(255, 57, 197, 92)
-                : Colors.grey,
+            color: _currentScreen == index ? const Color.fromARGB(255, 57, 197, 92) : Colors.grey,
           ),
         );
       }),
@@ -184,6 +181,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 }
 
+// Welcome screens remain the same
 class WelcomeScreen1 extends StatelessWidget {
   final VoidCallback onNext;
 
@@ -219,15 +217,9 @@ class WelcomeScreen1 extends StatelessWidget {
           children: [
             const SizedBox(height: 400), // Adjust this as needed
             const Text("Welcome to",
-                style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white)),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
             const Text("CineSphere",
-                style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 57, 197, 92))),
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 57, 197, 92))),
             const Text("Your go-to movie ticket app.",
                 style: TextStyle(fontSize: 14, color: Colors.white)),
             const Spacer(),
@@ -239,8 +231,7 @@ class WelcomeScreen1 extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5),
                 ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
               ),
             ),
             const SizedBox(height: 300), // Reduced space before the dots
@@ -286,10 +277,7 @@ class WelcomeScreen2 extends StatelessWidget {
           children: [
             const SizedBox(height: 400), // Adjust this as needed
             const Text("Browse & Book Fast",
-                style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 57, 197, 92))),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 57, 197, 92))),
             const Text("Find movies, check times, book instantly.",
                 style: TextStyle(fontSize: 14, color: Colors.white)),
             const Spacer(),
@@ -299,10 +287,9 @@ class WelcomeScreen2 extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 57, 197, 92),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(5),
                 ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
               ),
             ),
             const SizedBox(height: 300), // Reduced space before the dots
@@ -326,7 +313,7 @@ class WelcomeScreen3 extends StatelessWidget {
         Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('images/Swift Tour.jpeg'),
+              image: AssetImage('images/Osaka.jpeg'),
               fit: BoxFit.cover,
             ),
           ),
@@ -335,7 +322,7 @@ class WelcomeScreen3 extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Colors.black.withOpacity(0.8),
+                Colors.black.withOpacity(0.7),
                 Colors.transparent,
               ],
               begin: Alignment.bottomCenter,
@@ -347,25 +334,20 @@ class WelcomeScreen3 extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(height: 400), // Adjust this as needed
-            const Text("Pay Securely",
-                style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 57, 197, 92))),
-            const Text("Complete your transaction seamlessly.",
+            const Text("Secure Payments",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 57, 197, 92))),
+            const Text("Pay safely with various methods.",
                 style: TextStyle(fontSize: 14, color: Colors.white)),
             const Spacer(),
             ElevatedButton(
               onPressed: onNext,
-              child: const Text("Get Started",
-                  style: TextStyle(color: Colors.black)),
+              child: const Text("Get Started", style: TextStyle(color: Colors.black)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 57, 197, 92),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(5),
                 ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
               ),
             ),
             const SizedBox(height: 300), // Reduced space before the dots
