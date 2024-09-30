@@ -3,7 +3,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cinesphere/screens/home_screen.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'Paymongo.dart'; // Your PayMongo service
-import 'package:cinesphere/screens/welcome_screen.dart'; // Ensure this path is correct
 
 // Colors
 const bg_color = Color(0xff0D110F);

@@ -29,52 +29,58 @@ class GradientText extends StatelessWidget {
 
 class HomeScreen extends StatelessWidget {
   // Movie list for now playing
-  final List<Movie> nowPlayingMovies = [
-    Movie(
-      title: "The Nun II",
-      genre: "Horror",
-      releaseYear: 2023,
-      director: "Michael Chaves",
-      cast: ["Taissa Farmiga", "Storm Reid"],
-      description: "1956 - France. A priest is murdered. An evil is spreading. The sequel to the worldwide smash hit follows Sister Irene as she once again comes face-to-face with Valak, the demon nun.",
-      imageUrl: "images/The Nun II.jpeg",
-      trailerUrl: "https://youtu.be/QF-oyCwaArU?feature=shared",
-    ),
-    Movie(
-      title: "Harold and the Purple Crayon",
-      genre: "Animation",
-      releaseYear: 2023,
-      director: "Carla Marsh",
-      cast: ["Zach Tyler", "Lacey Chabert"],
-      description: "Based on the beloved children's book series, this film follows Harold's imaginative adventures.",
-      imageUrl: "images/Harold and the Purple Crayon.jpeg",
-      trailerUrl: "https://www.youtube.com/watch?v=trailer_id2",
-    ),
-    Movie(
-      title: "UnHappy For You",
-      genre: "Comedy",
-      releaseYear: 2023,
-      director: "George Thomas",
-      cast: ["Emily Blunt", "John Krasinski"],
-      description: "A comedy about the trials and tribulations of an overachieving couple.",
-      imageUrl: "images/UnHappy For You.jpeg",
-      trailerUrl: "https://www.youtube.com/watch?v=trailer_id3",
-    ),
-  ];
+// Now Playing Movies
+final List<Movie> nowPlayingMovies = [
+  Movie(
+    title: "The Nun II",
+    genre: "Horror",
+    releaseYear: 2023,
+    director: "Michael Chaves",
+    cast: ["Taissa Farmiga", "Storm Reid"],
+    description: "1956 - France. A priest is murdered...",
+    imageUrl: "images/The Nun II.jpeg",
+    trailerUrl: "https://youtu.be/QF-oyCwaArU?feature=shared",
+    MTRCBrating: 4.5, // Provide a rating
+  ),
+  Movie(
+    title: "Harold and the Purple Crayon",
+    genre: "Animation",
+    releaseYear: 2023,
+    director: "Carla Marsh",
+    cast: ["Zach Tyler", "Lacey Chabert"],
+    description: "Based on the beloved children's book series...",
+    imageUrl: "images/Harold and the Purple Crayon.jpeg",
+    trailerUrl: "https://www.youtube.com/watch?v=trailer_id2",
+    MTRCBrating: 4.0, // Provide a rating
+  ),
+  Movie(
+    title: "UnHappy For You",
+    genre: "Comedy",
+    releaseYear: 2023,
+    director: "George Thomas",
+    cast: ["Emily Blunt", "John Krasinski"],
+    description: "A comedy about the trials and tribulations...",
+    imageUrl: "images/UnHappy For You.jpeg",
+    trailerUrl: "https://www.youtube.com/watch?v=trailer_id3",
+    MTRCBrating: 3.5, // Provide a rating
+  ),
+];
 
-  // Movie list for upcoming movies
-  final List<Movie> upcomingMovies = [
-    Movie(
-      title: "Transformers One",
-      genre: "Action",
-      releaseYear: 2024,
-      director: "Steven Caple Jr.",
-      cast: ["Anthony Ramos", "Dominique Fishback"],
-      description: "The next installment in the Transformers franchise, featuring new characters and explosive action.",
-      imageUrl: "images/Transformers One.jpeg",
-      trailerUrl: "https://www.youtube.com/watch?v=trailer_id4",
-    ),
-  ];
+final List<Movie> upcomingMovies = [
+  Movie(
+    title: "Transformers One",
+    genre: "Action",
+    releaseYear: 2024,
+    director: "Steven Caple Jr.",
+    cast: ["Anthony Ramos", "Dominique Fishback"],
+    description: "The next installment in the Transformers franchise...",
+    imageUrl: "images/Transformers One.jpeg",
+    trailerUrl: "https://www.youtube.com/watch?v=trailer_id4",
+    MTRCBrating: 4.8, // Provide a rating
+  ),
+];
+
+
 
   @override
   Widget build(BuildContext context) {
