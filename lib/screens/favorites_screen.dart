@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:cinesphere/favorites_manager.dart'; // Import the FavoritesManager
+import 'package:cinesphere/screens/moviedesc_screen.dart'; // Import the MovieDescScreen
+import 'package:cinesphere/screens/movie.dart'; // Import the Movie class
 
 class FavoritesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final favoriteMovies = FavoritesManager.instance.favoriteMovies;
+    // Access favoriteMovies correctly
+    final favoriteMovies = FavoritesManager().favoriteMovies; // Ensure you are using Singleton if needed
 
     return Scaffold(
       appBar: AppBar(
@@ -37,25 +40,32 @@ class FavoritesScreen extends StatelessWidget {
               ),
             )
           : ListView.builder(
-            scrollDirection: Axis.vertical,
+              scrollDirection: Axis.vertical,
               itemCount: favoriteMovies.length,
               itemBuilder: (context, index) {
-                final movie = favoriteMovies[index];
+                final Movie movie = favoriteMovies[index] as Movie; // Ensure movie is of type Movie
                 return ListTile(
                   contentPadding: EdgeInsets.all(8),
                   leading: Image.asset(
-                    "images/${movie}.jpeg",
+                    movie.imageUrl, // Access the imageUrl directly from the Movie object
                     width: 50,
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  title: Text(movie,
-                  style: TextStyle(
-                     
-                  ),
+                  title: Text(
+                    movie.title, // Access the title directly from the Movie object
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
                   ),
                   onTap: () {
-                    // Navigate to movie details if needed
+                    // Navigate to movie details
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MovieDescScreen(movie: movie), // Pass the selected movie
+                      ),
+                    );
                   },
                 );
               },
