@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cinesphere/screens/movie.dart';
 import 'package:cinesphere/screens/moviedesc_screen.dart';
 
-
+// Custom GradientText widget for styled text
 class GradientText extends StatelessWidget {
   final String text;
   final Gradient gradient;
@@ -28,6 +28,7 @@ class GradientText extends StatelessWidget {
 }
 
 class HomeScreen extends StatelessWidget {
+  // Movie list for now playing
   final List<Movie> nowPlayingMovies = [
     Movie(
       title: "The Nun II",
@@ -37,7 +38,7 @@ class HomeScreen extends StatelessWidget {
       cast: ["Taissa Farmiga", "Storm Reid"],
       description: "1956 - France. A priest is murdered. An evil is spreading. The sequel to the worldwide smash hit follows Sister Irene as she once again comes face-to-face with Valak, the demon nun.",
       imageUrl: "images/The Nun II.jpeg",
-      trailerUrl: "https://youtu.be/QF-oyCwaArU?feature=shared", 
+      trailerUrl: "https://youtu.be/QF-oyCwaArU?feature=shared",
     ),
     Movie(
       title: "Harold and the Purple Crayon",
@@ -47,7 +48,7 @@ class HomeScreen extends StatelessWidget {
       cast: ["Zach Tyler", "Lacey Chabert"],
       description: "Based on the beloved children's book series, this film follows Harold's imaginative adventures.",
       imageUrl: "images/Harold and the Purple Crayon.jpeg",
-      trailerUrl: "https://www.youtube.com/watch?v=trailer_id2", 
+      trailerUrl: "https://www.youtube.com/watch?v=trailer_id2",
     ),
     Movie(
       title: "UnHappy For You",
@@ -57,10 +58,11 @@ class HomeScreen extends StatelessWidget {
       cast: ["Emily Blunt", "John Krasinski"],
       description: "A comedy about the trials and tribulations of an overachieving couple.",
       imageUrl: "images/UnHappy For You.jpeg",
-      trailerUrl: "https://www.youtube.com/watch?v=trailer_id3", 
+      trailerUrl: "https://www.youtube.com/watch?v=trailer_id3",
     ),
   ];
 
+  // Movie list for upcoming movies
   final List<Movie> upcomingMovies = [
     Movie(
       title: "Transformers One",
@@ -87,7 +89,7 @@ class HomeScreen extends StatelessWidget {
             colors: [
               Color.fromRGBO(134, 162, 145, 100),
               Color.fromRGBO(177, 196, 185, 100),
-              Color.fromRGBO(78, 106, 89, 100)
+              Color.fromRGBO(78, 106, 89, 100),
             ],
             end: Alignment.bottomRight,
           ),
@@ -101,6 +103,7 @@ class HomeScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            // Now Showing Section
             Padding(
               padding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
               child: Row(
@@ -215,6 +218,7 @@ class HomeScreen extends StatelessWidget {
                 },
               ),
             ),
+            // Upcoming Movies Section
             Padding(
               padding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
               child: Row(
@@ -332,38 +336,29 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.black,
-        child: Row(
-          children: [
-            IconButton(
-              icon: Icon(Icons.favorite_outline, color: Colors.white),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => FavoritesScreen(),
-                  ),
-                );
-              },
-            ),
-            Spacer(), // Pushes the next button to the center
-            IconButton(
-              icon: Icon(Icons.home_outlined, color: Colors.white),
-              onPressed: () {
-                Navigator.popUntil(context, ModalRoute.withName('/')); // Navigate to HomeScreen
-              },
-            ),
-            Spacer(), // Pushes the next button to the center
-            IconButton(
-              icon: Icon(Icons.notifications_outlined, color: Colors.white),
-              onPressed: () {
-                // Handle notifications button press
-                // Navigate to NotificationsScreen or show notifications
-              },
-            ),
-          ]
-        ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            label: 'Favorites',
+          ),
+        ],
+        currentIndex: 0,
+        selectedItemColor: Colors.green,
+        onTap: (int index) {
+          if (index == 1) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FavoritesScreen(),
+              ),
+            );
+          }
+        },
       ),
     );
   }
