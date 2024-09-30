@@ -1,7 +1,10 @@
+import 'package:cinesphere/favorites_manager.dart';
+import 'package:cinesphere/main.dart';
 import 'package:flutter/material.dart';
 import 'package:cinesphere/screens/movie.dart'; // Ensure this is correctly defined
 import 'package:cinesphere/screens/moviedesc_screen.dart'; // Ensure this is correctly defined
 import 'package:cinesphere/screens/favorites_screen.dart'; // Ensure this is correctly defined
+import 'package:google_fonts/google_fonts.dart';
 
 class HomeScreen extends StatelessWidget {
   final List<Movie> nowPlayingMovies = [
@@ -151,7 +154,7 @@ class HomeScreen extends StatelessWidget {
    @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: bg_color,
       appBar: AppBar(
         backgroundColor: Colors.black,
         elevation: 0,
@@ -245,11 +248,11 @@ class HomeScreen extends StatelessWidget {
         children: [
           Text(
             title,
-            style: TextStyle(
-              color: Color.fromRGBO(141, 232, 171, 1),
+            style: GoogleFonts.lexendDeca(
+              color: header_text,
               fontSize: 22,
               fontWeight: FontWeight.bold,
-            ),
+            ),  
           ),
           SizedBox(height: 10),
           SizedBox(

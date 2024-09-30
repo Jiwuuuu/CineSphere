@@ -2,16 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cinesphere/screens/home_screen.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'Paymongo.dart'; // Your PayMongo servic
-
+import 'Paymongo.dart'; // Your PayMongo service
 // Colors
-const bg_color = Color(0xff0D110F);
-const text_color = Color(0xffF6F9F7);
-const primary_color = Color(0xff86A291);
-const secondary_color = Color(0xff4E6A59);
-const accent_color = Color(0xffB1C4B9);
-const btn1_color = Color(0xff141F18);
-
+const bg_color = Color(0xff07130E);
+const text = Color(0xffE2F1EB);
+const header_text = Color(0xff40E49F);
 void main() {
   runApp(const MyApp());
 }
