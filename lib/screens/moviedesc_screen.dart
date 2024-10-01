@@ -224,25 +224,25 @@ class _MovieDescScreenState extends State<MovieDescScreen> {
                   SizedBox(height: 10),
                   //rating
                   Row(
-  children: [
-    Text(
-      'MTRCB Rating: ',
-      style: TextStyle(
-        fontSize: 14,
-        color: const Color.fromARGB(255, 147, 235, 136), // Color for the label
-        fontWeight: FontWeight.normal,
-      ),
-    ),
-    Text(
-      widget.movie.MTRCBrating,
-      style: TextStyle(
-        fontSize: 14,
-        color: const Color.fromARGB(255, 255, 255, 255), // Different color for the genre
-        fontWeight: FontWeight.normal,
-      ),
-    ),
-  ],
-),
+                    children: [
+                      Text(
+                        'MTRCB Rating: ',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: const Color.fromARGB(255, 147, 235, 136),
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                      Text(
+                        widget.movie.MTRCBrating,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: const Color.fromARGB(255, 255, 255, 255),
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                    ],
+                  ),
                   SizedBox(height: 10),
                   // Buttons Row
                   Row(
