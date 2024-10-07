@@ -46,7 +46,7 @@ class FavoritesScreen extends StatelessWidget {
                 return ListTile(
                   contentPadding: EdgeInsets.all(8),
                   leading: Image.asset(
-                    movie.imageUrl,
+                    movie.poster_url,
                     width: 50,
                     height: 50,
                     fit: BoxFit.cover,

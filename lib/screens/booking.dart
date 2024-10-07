@@ -1,6 +1,10 @@
+import 'package:cinesphere/database/supabase_service.dart';
 import 'package:cinesphere/main.dart';
 import 'package:cinesphere/screens/movie.dart';
 import 'package:flutter/material.dart';
+
+final supabaseClient = SupabaseService().client;
+
 
 class BookingScreen extends StatelessWidget {
   final Movie movie; // Add a field to hold the movie
@@ -28,7 +32,7 @@ class BookingScreen extends StatelessWidget {
                 // Navigate to the PaymentScreen when the button is pressed
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => PaymentScreen(), // You can pass any needed parameters here
+                    builder: (context) => PaymentScreen(), 
                   ),
                 );
               },

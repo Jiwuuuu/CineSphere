@@ -2,12 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cinesphere/screens/home_screen.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'Paymongo.dart'; // Your PayMongo service
+import 'Paymongo.dart';
+import 'database/supabase_service.dart'; // Your PayMongo service
+
 // Colors
 const bg_color = Color(0xff07130E);
 const text = Color(0xffE2F1EB);
 const header_text = Color(0xff40E49F);
-void main() {
+const icon_color = Color(0xff8CDDBB);
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize Supabase
+  await SupabaseService().initializeSupabase();
+
   runApp(const MyApp());
 }
 
@@ -19,10 +27,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        fontFamily: 'Poppins',
         scaffoldBackgroundColor: const Color(0xFF212429),
       ),
-      home: SplashScreen(), // Use SplashScreen as the starting screen
+      home: SplashScreen(),
     );
   }
 }

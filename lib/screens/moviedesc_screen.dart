@@ -4,6 +4,9 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:cinesphere/screens/movie.dart';
 import 'package:cinesphere/favorites_manager.dart';
 import 'package:cinesphere/screens/booking.dart';
+import 'package:cinesphere/database/supabase_service.dart';
+
+final supabaseClient = SupabaseService().client;
 
 class MovieDescScreen extends StatefulWidget {
   final Movie movie;
@@ -42,7 +45,7 @@ class _MovieDescScreenState extends State<MovieDescScreen> {
   }
 
   Future<void> _launchTrailer() async {
-    final Uri url = Uri.parse(widget.movie.trailerUrl);
+    final Uri url = Uri.parse(widget.movie.trailer_link);
     if (await canLaunchUrl(url)) {
       await launchUrl(url);
     } else {
@@ -66,7 +69,7 @@ class _MovieDescScreenState extends State<MovieDescScreen> {
             child: Container(
               height: MediaQuery.of(context).size.height / 2.2,
               child: Image.asset(
-                widget.movie.imageUrl,
+                widget.movie.poster_url,
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: double.infinity,
@@ -234,7 +237,7 @@ class _MovieDescScreenState extends State<MovieDescScreen> {
                         ),
                       ),
                       Text(
-                        widget.movie.MTRCBrating,
+                        widget.movie.mtrcb_rating,
                         style: TextStyle(
                           fontSize: 14,
                           color: const Color.fromARGB(255, 255, 255, 255),
