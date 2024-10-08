@@ -47,8 +47,8 @@ class FavoritesScreen extends StatelessWidget {
                   contentPadding: EdgeInsets.all(8),
                   leading: Image.asset(
                     movie.poster_url,
-                    width: 50,
-                    height: 50,
+                    width: 75,
+                    height: 75,
                     fit: BoxFit.cover,
                   ),
                   title: Text(

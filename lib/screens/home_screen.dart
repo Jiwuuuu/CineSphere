@@ -5,53 +5,73 @@ import 'package:cinesphere/screens/movie.dart';
 import 'package:cinesphere/screens/moviedesc_screen.dart';
 import 'package:cinesphere/screens/favorites_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:carousel_slider/carousel_slider.dart'; // Add this package for carousel functionality
 
 final supabaseClient = SupabaseService().client;
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this); // 3 tabs
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bg_color,
       appBar: AppBar(
-        backgroundColor: bg_color,
-        elevation: 0,
-        title: Row(
-          children: [
-            Text(
-              "CS",
-              style: GoogleFonts.lexend(
-                fontWeight: FontWeight.bold,
-                color: header_text,
-                fontSize: 20,
-              ),
-            ),
-            SizedBox(width: 20),
-            Expanded(
-              child: TextField(
-                style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0)),
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 15),
-                  filled: true,
-                  fillColor: const Color.fromARGB(255, 255, 255, 255),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide.none,
-                  ),
-                  hintText: 'Search',
-                  hintStyle: TextStyle(color: bg_color),
-                  prefixIcon: Icon(Icons.search, color: bg_color),
-                ),
-              ),
-            ),
-          ],
-        ),
-        centerTitle: true,
+  backgroundColor: bg_color,
+  elevation: 0,
+  title: Row(
+    mainAxisAlignment: MainAxisAlignment.center, // Center the Row contents
+    mainAxisSize: MainAxisSize.min, // Take only the necessary space
+    children: [
+      Image.asset(
+        'images/Logo.png', // Replace with your image path
+        height: 30, // Adjust the size of the logo
       ),
+      const SizedBox(width: 10), // Add some spacing between the logo and text
+      Text(
+        "CINESPHERE",
+        style: GoogleFonts.lexend(
+          fontWeight: FontWeight.bold,
+          color: header_text,
+          fontSize: 30,
+        ),
+      ),
+    ],
+  ),
+  centerTitle: true, // Keeps the title centered
+  bottom: TabBar(
+    controller: _tabController,
+    tabs: const [
+      Tab(text: 'Now Showing'),
+      Tab(text: 'Advance Selling'),
+      Tab(text: 'Coming Soon'),
+    ],
+    labelColor: header_text,
+    unselectedLabelColor: Colors.grey,
+    dividerColor: Colors.transparent,
+    indicator: const UnderlineTabIndicator(
+      borderSide: BorderSide(
+        color: header_text, // Set your desired color here
+        width: 2.0, // Set the thickness of the underline
+      ),
+    ),
+  ),
+),
       body: FutureBuilder<List<Movie>>(
-        future: fetchMovies(), // Fetch movies from Supabase
+        future: fetchMovies(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -61,23 +81,19 @@ class HomeScreen extends StatelessWidget {
             return Center(child: Text('No movies found.'));
           }
 
-          // Assuming the data is fetched successfully
           final List<Movie> movies = snapshot.data!;
 
-          // Split movies into three categories based on status
           final List<Movie> nowPlayingMovies = movies.where((movie) => movie.status == 'Now Showing').toList();
           final List<Movie> upcomingMovies = movies.where((movie) => movie.status == 'Coming Soon').toList();
           final List<Movie> advanceSellingMovies = movies.where((movie) => movie.status == 'Advance Selling').toList();
 
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildCategorySection("Now Showing", nowPlayingMovies, context),
-                _buildCategorySection("Advance Selling", advanceSellingMovies, context),
-                _buildCategorySection("Coming Soon", upcomingMovies, context),
-              ],
-            ),
+          return TabBarView(
+            controller: _tabController,
+            children: [
+              _buildCarouselSection(nowPlayingMovies, context),
+              _buildCarouselSection(advanceSellingMovies, context),
+              _buildCarouselSection(upcomingMovies, context),
+            ],
           );
         },
       ),
@@ -118,7 +134,7 @@ class HomeScreen extends StatelessWidget {
                 ),
               );
             }),
-            _buildBottomBarItem(Icons.notifications_outlined, 'Transaction', () {
+            _buildBottomBarItem(Icons.receipt_long_rounded, 'Transaction', () {
               // Implement notifications functionality if needed
             }),
           ],
@@ -127,14 +143,12 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // Fetch movies from Supabase
   Future<List<Movie>> fetchMovies() async {
     try {
       final response = await supabaseClient
           .from('movies') // Your Supabase table name
-          .select(); // Cast the result as a List of Map
+          .select();
 
-      // Map the response data to List<Movie>
       final List<Movie> movies = response.map((item) {
         return Movie(
           title: item['title'],
@@ -145,7 +159,7 @@ class HomeScreen extends StatelessWidget {
           description: item['description'],
           poster_url: item['poster_url'],
           trailer_link: item['trailer_link'],
-          status: item['status'], // Include status here
+          status: item['status'],
         );
       }).toList();
 
@@ -177,84 +191,92 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-Widget _buildCategorySection(String title, List<Movie> movies, BuildContext context) {
+Widget _buildCarouselSection(List<Movie> movies, BuildContext context) {
   return Padding(
-    padding: const EdgeInsets.only(left: 15, top: 15),
+    padding: const EdgeInsets.only(left: 0, top: 50),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min, // Use min to constrain the column's height
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          title,
-          style: GoogleFonts.lexend(fontSize: 24, fontWeight: FontWeight.w800, color: header_text),
-        ),
-        SizedBox(height: 10),
-        SizedBox(
-          height: 250, // Adjust height as needed
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: movies.length,
-            itemBuilder: (context, index) {
-              return GestureDetector(
-                onTap: () {
-                  // Navigate to movie description screen
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MovieDescScreen(movie: movies[index]),
-                    ),
-                  );
-                },
-                child: Container(
-                  width: 150, // Adjust width as needed
-                  margin: EdgeInsets.only(right: 10),
+        CarouselSlider(
+          items: movies.map((movie) {
+            return Builder(
+              builder: (BuildContext context) {
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MovieDescScreen(movie: movie),
+                      ),
+                    );
+                  },
                   child: Column(
                     children: [
-                      // Poster Image
                       Container(
-                        height: 200, // Adjust height as needed
+                        height: 400,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: NetworkImage(movies[index].poster_url.isEmpty 
-                              ? 'images/default_image_url.jpg' // Use a default image if poster_url is empty
-                              : movies[index].poster_url),
+                            image: NetworkImage(movie.poster_url.isEmpty
+                                ? 'images/default_image_url.jpg'
+                                : movie.poster_url),
                             fit: BoxFit.cover,
                           ),
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      SizedBox(height: 4), // Spacing between poster and text
-                      // Title and Genre below the poster
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          // Title with truncation
-                          Text(
-                            truncateTitle(movies[index].title, maxLength: 15), // Use the helper function
-                            style: GoogleFonts.lexend(
-                              color: text,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18, // Adjust font size as needed
-                            ),
-                            maxLines: 1, // Limit to 1 line
-                            overflow: TextOverflow.ellipsis, // Show ellipsis for overflow
+                      SizedBox(height: 8), // Space between poster and title
+                      Text(
+                        truncateTitle(movie.title, maxLength: 15),
+                        style: GoogleFonts.lexend(
+                          color: text,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 4), // Space between title and description
+                      Container(
+                        height: 60, // Fixed height for description
+                        alignment: Alignment.center,
+                        child: Text(
+                          movie.description,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.lexend(
+                            color: text,
+                            fontSize: 14,
                           ),
-                          SizedBox(height: 2),
-                          // Genre
-                          Text(
-                            movies[index].genre,
-                            style: GoogleFonts.lexend(
-                              color: text,
-                              fontSize: 12, // Adjust font size as needed
-                            ),
+                          maxLines: 3, // Limit to 3 lines
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      SizedBox(height: 10), // Space between description and genre
+                      Container(
+                        height: 20, // Fixed height for genre to prevent overflow
+                        child: Text(
+                          movie.genre,
+                          style: GoogleFonts.lexend(
+                            color: text,
+                            fontSize: 12,
                           ),
-                        ],
+                          maxLines: 1, // Limit to 1 line
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ],
                   ),
-                ),
-              );
-            },
+                );
+              },
+            );
+          }).toList(),
+          options: CarouselOptions(
+            height: 530,
+            enlargeCenterPage: true,
+            autoPlay: true,
+            enableInfiniteScroll: true,
+            aspectRatio: 16 / 9,
+            initialPage: 0,
           ),
         ),
       ],
@@ -263,11 +285,12 @@ Widget _buildCategorySection(String title, List<Movie> movies, BuildContext cont
 }
 
 
-String truncateTitle(String title, {int maxLength = 15}) {
-  if (title.length > maxLength) {
-    return '${title.substring(0, maxLength)}...'; // Truncate and add ellipsis
-  }
-  return title; // Return original title if within length
-}
 
+
+  String truncateTitle(String title, {int maxLength = 15}) {
+    if (title.length > maxLength) {
+      return '${title.substring(0, maxLength)}...';
+    }
+    return title;
+  }
 }
