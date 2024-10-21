@@ -1,10 +1,10 @@
-import 'package:cinesphere/main.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cinesphere/screens/movie.dart';
 import 'package:cinesphere/favorites_manager.dart';
 import 'package:cinesphere/screens/booking.dart';
 import 'package:cinesphere/database/supabase_service.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 final supabaseClient = SupabaseService().client;
 
@@ -58,244 +58,217 @@ class _MovieDescScreenState extends State<MovieDescScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          // Background Image
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              height: MediaQuery.of(context).size.height / 2.2,
-              child: Image.asset(
-                widget.movie.poster_url,
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: double.infinity,
-              ),
-            ),
-          ),
-          // Back and Favorite Buttons
-          Positioned(
-            top: 50,
-            left: 10,
-            right: 10,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
-                    size: 28,
-                  ),
-                ),
-                IconButton(
-                  onPressed: _toggleFavorite,
-                  icon: Icon(
-                    isFavorite ? Icons.bookmark_add : Icons.bookmark_border,
-                    color: Color.fromARGB(255, 235, 216, 16),
-                    size: 25,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Movie Details
-          Positioned(
-            top: MediaQuery.of(context).size.height / 2.2,
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              padding: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.6),
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      backgroundColor: Color(0xFF07130E),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
                 children: [
-                  // Title
-                  Text(
-                    widget.movie.title,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: const Color.fromARGB(255, 147, 235, 136),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 400,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: NetworkImage(widget.movie.poster_url),
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
-                  SizedBox(height: 10),
-                  //Description
-                  Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          isDescriptionExpanded
-                            ? widget.movie.description
-                            : (widget.movie.description.length > 100
-                                ? widget.movie.description.substring(0, 100) + '...'
-                                : widget.movie.description),
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
+                  Positioned(
+                    top: 20,
+                    left: 20,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.arrow_back,
+                            color: Color(0xFF8CDDBB),
+                            shadows: [
+                              Shadow(
+                                offset: Offset(2.0, 2.0),
+                                blurRadius: 4.0,
+                                color: Colors.black,
+                              ),
+                            ],
                           ),
+                          SizedBox(width: 5),
+                          Text(
+                            'Back',
+                            style: GoogleFonts.lexend(
+                              color: Color(0xFF8CDDBB),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                              shadows: [
+                                Shadow(
+                                  offset: Offset(2.0, 2.0),
+                                  blurRadius: 4.0,
+                                  color: Colors.black,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 20,
+                    right: 20,
+                    child: IconButton(
+                      onPressed: _toggleFavorite,
+                      icon: Icon(
+                        isFavorite ? Icons.bookmark : Icons.bookmark_border,
+                        color: Color(0xFFE2F1EB),
+                        size: 28,
+                        shadows: [
+                          Shadow(
+                            offset: Offset(2.0, 2.0),
+                            blurRadius: 4.0,
+                            color: Colors.black,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.movie.title,
+                      style: GoogleFonts.lexend(
+                        color: Color(0xFF8CDDBB),
+                        fontSize: 30,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      isDescriptionExpanded
+                          ? widget.movie.description
+                          : (widget.movie.description.length > 100
+                              ? widget.movie.description.substring(0, 100) + '...'
+                              : widget.movie.description),
+                      textAlign: TextAlign.justify,
+                      style: GoogleFonts.lexend(
+                        color: Color(0xFFE2F1EB),
+                        fontSize: 18,
+                        fontWeight: FontWeight.w300,
+                      ),
+                    ),
+                    if (widget.movie.description.length > 100) GestureDetector(
+                      onTap: _toggleDescription,
+                      child: Text(
+                        isDescriptionExpanded ? 'Read Less' : 'Read More',
+                        style: GoogleFonts.lexend(
+                          color: Color(0xFFE2F1EB),
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
                         ),
-                        SizedBox(height: 8),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    _buildMovieDetailRow('Genre', widget.movie.genre),
+                    _buildMovieDetailRow('Director', widget.movie.director),
+                    _buildMovieDetailRow('Cast', widget.movie.cast.join(', ')),
+                    SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.play_circle_fill,
+                          color: Color(0xFFE2F1EB),
+                          size: 30,
+                        ),
+                        SizedBox(width: 8),
                         GestureDetector(
-                          onTap: _toggleDescription,
+                          onTap: _launchTrailer,
                           child: Text(
-                            isDescriptionExpanded ? 'Read Less' : 'Read More',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Color.fromARGB(255, 235, 216, 16),
-                              fontWeight: FontWeight.bold,
+                            'Watch Trailer',
+                            style: GoogleFonts.lexend(
+                              color: Color(0xFFE2F1EB),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w400,
+                              decoration: TextDecoration.underline,
                             ),
                           ),
                         ),
                       ],
                     ),
-                  // Genre
-                  Row(
-  children: [
-    Text(
-      'Genre: ',
-      style: TextStyle(
-        fontSize: 14,
-        color: text, // Color for the label
-        fontWeight: FontWeight.normal,
-      ),
-    ),
-    Text(
-      widget.movie.genre,
-      style: TextStyle(
-        fontSize: 14,
-        color: const Color.fromARGB(255, 255, 255, 255), // Different color for the genre
-        fontWeight: FontWeight.normal,
-      ),
-    ),
-  ],
-),
-                  SizedBox(height: 10),
-                  // Director
-                  Row(
-  children: [
-    Text(
-      'Director: ',
-      style: TextStyle(
-        fontSize: 14,
-        color: text, // Color for the label
-        fontWeight: FontWeight.normal,
-      ),
-    ),
-    Text(
-      widget.movie.director,
-      style: TextStyle(
-        fontSize: 14,
-        color: const Color.fromARGB(255, 255, 255, 255), // Different color for the genre
-        fontWeight: FontWeight.normal,
-      ),
-    ),
-  ],
-),
-                  SizedBox(height: 10),
-                  // Cast
-                  Row(
-  children: [
-    Text(
-      'Cast: ',
-      style: TextStyle(
-        fontSize: 14,
-        color: const Color.fromARGB(255, 147, 235, 136), // Color for the label
-        fontWeight: FontWeight.normal,
-      ),
-    ),
-    Text(
-      widget.movie.cast.join(', '),
-      style: TextStyle(
-        fontSize: 14,
-        color: const Color.fromARGB(255, 255, 255, 255), // Different color for the genre
-        fontWeight: FontWeight.normal,
-      ),
-    ),
-  ],
-),
-                  SizedBox(height: 10),
-                  //rating
-                  Row(
-                    children: [
-                      Text(
-                        'MTRCB Rating: ',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: const Color.fromARGB(255, 147, 235, 136),
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                      Text(
-                        widget.movie.mtrcb_rating,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: const Color.fromARGB(255, 255, 255, 255),
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  // Buttons Row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // See Trailer Button
-                      ElevatedButton(
-                        onPressed: _launchTrailer,
-                        child: Text('See Trailer'),
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor: Colors.orange,
-                          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                          textStyle: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      // Book Now Button
-                      InkWell(
-                        onTap: () {
+                    SizedBox(height: 10),
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => BookingScreen(movie: widget.movie)),
+                            MaterialPageRoute(
+                              builder: (context) => BookingScreen(movie: widget.movie),
+                            ),
                           );
                         },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-                          decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 51, 57, 52), // Example color
-                            borderRadius: BorderRadius.circular(10),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF8CDDBB),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 40,
+                            vertical: 16,
                           ),
-                          child: Text(
-                            "Book Now",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          textStyle: GoogleFonts.lexend(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(9),
+                          ),
+                        ),
+                        child: Text(
+                          'Book Now',
+                          style: GoogleFonts.lexend(
+                            color: Colors.black,
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                ]
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMovieDetailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(
+              text: '$label: ',
+              style: GoogleFonts.lexend(
+                color: Color(0xFF8CDDBB),
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
               ),
             ),
-          ),
-        ],
+            TextSpan(
+              text: value,
+              style: GoogleFonts.lexend(
+                color: Color(0xFFE2F1EB),
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
