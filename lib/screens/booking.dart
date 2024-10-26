@@ -1,9 +1,11 @@
-import 'package:table_calendar/table_calendar.dart';
 import 'package:cinesphere/database/supabase_service.dart';
 import 'package:cinesphere/main.dart';
 import 'package:cinesphere/screens/movie.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/rendering.dart';
+import 'dart:ui' as ui;
 
 final supabaseClient = SupabaseService().client;
 
@@ -17,41 +19,33 @@ class BookingScreen extends StatefulWidget {
 }
 
 class _BookingScreenState extends State<BookingScreen> {
-  final int maxSeats = 6; // Maximum number of seats user can select
   final double ticketPrice = 450; // Price per ticket
 
-  List<String> selectedSeats = []; // List to store selected seat indices (now Strings)
-  List<String> bookedSeats = []; // List to store booked seats from database (now Strings)
-  List<String> seatNumbers = []; // List to store all seat numbers fetched from the database
-
-  String? selectedCinemaSettingsId; // To store the selected cinema settings ID
-
-
-  // Dropdown selections
+  String? selectedCinemaSettingsId;
   String? selectedLocation;
+  DateTime? selectedDate;
   String? selectedFormat;
   String? selectedTime;
 
-  List<Map<String, String>> locations = []; // List to store fetched locations with UUID and name
-  List<String> locationNames = []; // List of location names for dropdown
-  List<DateTime> availableDates = []; // List to store fetched available dates
-  List<String> formats = []; // List to store fetched formats
-  List<String> times = []; // List to store fetched times
+  List<Map<String, String>> locations = [];
+  List<String> locationNames = [];
+  List<DateTime> availableDates = [];
+  List<String> formats = [];
+  List<String> times = [];
+  List<Map<String, dynamic>> availableSeats = [];
+  Set<String> selectedSeats = {}; // Track selected seat IDs
 
-  bool isLoading = true; // State to manage loading indicator
-  DateTime? selectedDate; // Selected date for booking
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    fetchLocations(); // Fetch cinema locations when screen initializes
+    fetchLocations();
   }
 
   Future<void> fetchLocations() async {
     try {
-      final response = await supabaseClient
-          .from('cinema_locations')
-          .select();
+      final response = await supabaseClient.from('cinema_locations').select();
 
       setState(() {
         locations = List<Map<String, String>>.from(response.map((location) => {
@@ -59,13 +53,10 @@ class _BookingScreenState extends State<BookingScreen> {
               'name': location['name'] as String,
             }));
 
-        // Extract location names for dropdown options
         locationNames = locations.map((location) => location['name']!).toList();
-
-        isLoading = false; // Stop loading after fetching locations
+        isLoading = false;
       });
     } catch (error) {
-      // Handle error (optional: show a message or log the error)
       print('Error fetching locations: $error');
       setState(() {
         isLoading = false;
@@ -73,118 +64,156 @@ class _BookingScreenState extends State<BookingScreen> {
     }
   }
 
-Future<void> fetchSettings(String locationId) async {
-  setState(() {
-    isLoading = true;
-  });
-
-  try {
-    final response = await supabaseClient
-        .from('cinema_settings')
-        .select()
-        .eq('location_id', locationId)
-        .eq('movie_id', widget.movie.id);
-
-    if (response.isNotEmpty) {
-      // Store the ID of the first available setting for the selected location and movie
-      selectedCinemaSettingsId = response[0]['id'] as String;
-
-      setState(() {
-        availableDates = response
-            .map((setting) => DateTime.parse(setting['available_date']))
-            .toSet()
-            .toList();
-        formats = response
-            .map((setting) => setting['screen_type'] as String)
-            .toSet()
-            .toList();
-        times = response
-            .map((setting) => setting['schedule_time'].toString())
-            .toSet()
-            .toList();
-        isLoading = false;
-      });
-    } else {
-      setState(() {
-        isLoading = false;
-      });
-      print('No settings found for the selected location.');
-    }
-  } catch (error) {
+  Future<void> fetchAvailableDates(String locationId) async {
     setState(() {
-      isLoading = false;
+      isLoading = true;
+      selectedCinemaSettingsId = null;
+      selectedFormat = null;
+      selectedTime = null;
+      availableDates.clear();
+      formats.clear();
+      times.clear();
+      availableSeats.clear();
+      selectedSeats.clear();
     });
-    print('Error fetching settings: $error');
-  }
-}
 
-
-Future<void> fetchSeatAvailability(String cinemaSettingsId) async {
-  try {
-    final response = await supabaseClient
-        .from('seat_availability')
-        .select()
-        .eq('cinema_settings_id', cinemaSettingsId);
-
-    setState(() {
-      bookedSeats = [];
-      if (response.isNotEmpty) {
-        for (var seat in response) {
-          String seatNumber = seat['seat_number'].toString();
-          if (seat['is_booked'] == true) {
-            bookedSeats.add(seatNumber);
-          }
-        }
-      } else {
-        print('No seats found for the selected schedule.');
-      }
-      isLoading = false;
-    });
-  } catch (error) {
-    print('Error fetching seat availability: $error');
-    setState(() {
-      isLoading = false;
-    });
-  }
-}
-
-
-
-Future<void> reserveSeats(String cinemaSettingsId) async {
-  try {
-    for (String seatNumber in selectedSeats) {
-      print('Reserving seat: $seatNumber'); // Debug statement
-
+    try {
       final response = await supabaseClient
-          .from('seat_availability')
-          .update({'is_booked': true})
-          .eq('cinema_settings_id', cinemaSettingsId)
-          .eq('seat_number', seatNumber)
-          .select();
+          .from('cinema_settings')
+          .select('available_date')
+          .eq('location_id', locationId)
+          .eq('movie_id', widget.movie.id);
 
-      if (response.isEmpty) {
-        throw 'Error updating seat $seatNumber for cinema settings $cinemaSettingsId';
+      if (response.isNotEmpty) {
+        setState(() {
+          availableDates = response
+              .map((setting) => DateTime.parse(setting['available_date']))
+              .toSet()
+              .toList();
+        });
+      } else {
+        print('No available dates found for the selected location.');
       }
-
-      print('Update Response: $response'); // Debug statement
+    } catch (error) {
+      print('Error fetching available dates: $error');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
+  }
 
+  Future<void> fetchSettings(String locationId, DateTime date) async {
     setState(() {
-      bookedSeats.addAll(selectedSeats); // Add the selected seats to bookedSeats
-      selectedSeats.clear(); // Clear selected seats after reservation
+      isLoading = true;
+      selectedCinemaSettingsId = null;
+      selectedFormat = null;
+      selectedTime = null;
+      formats.clear();
+      times.clear();
+      availableSeats.clear();
+      selectedSeats.clear();
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Seats reserved successfully!')),
-    );
-  } catch (error) {
-    print('Error reserving seats: $error');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Failed to reserve seats. Please try again.')),
-    );
-  }
-}
+    try {
+      final response = await supabaseClient
+          .from('cinema_settings')
+          .select()
+          .eq('location_id', locationId)
+          .eq('movie_id', widget.movie.id)
+          .eq('available_date', date.toIso8601String().split('T').first);
 
+      if (response.isNotEmpty) {
+        setState(() {
+          selectedCinemaSettingsId = response[0]['id'] as String;
+          formats = response
+              .map((setting) => setting['screen_type'] as String)
+              .toSet()
+              .toList();
+          times = response
+              .map((setting) => setting['schedule_time'].toString())
+              .toSet()
+              .toList();
+        });
+      } else {
+        print('No settings found for the selected location and date.');
+      }
+    } catch (error) {
+      print('Error fetching settings: $error');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> fetchAvailableSeats(String cinemaSettingsId) async {
+    setState(() {
+      isLoading = true;
+      availableSeats.clear(); // Clear previous seats data
+      selectedSeats.clear(); // Clear selected seats
+    });
+
+    try {
+      final response = await supabaseClient
+          .from('seats')
+          .select()
+          .eq('cinema_settings_id', cinemaSettingsId);
+
+      setState(() {
+        availableSeats = List<Map<String, dynamic>>.from(response);
+
+        // Sort availableSeats by seat_number for consistent ordering
+        availableSeats.sort((a, b) => a['seat_number'].compareTo(b['seat_number']));
+      });
+    } catch (error) {
+      print('Error fetching available seats: $error');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> reserveSeats(String cinemaSettingsId) async {
+    try {
+      for (String seatId in selectedSeats) {
+        // Get seat details
+        final seat = availableSeats.firstWhere((seat) => seat['id'] == seatId);
+
+        // Insert a booking into the bookings table
+        await supabaseClient.from('bookings').insert({
+          'movie_id': widget.movie.id,
+          'location': selectedLocation,
+          'date': selectedDate?.toIso8601String(),
+          'screen_type': selectedFormat,
+          'schedule_time': selectedTime,
+          'cinema_settings_id': cinemaSettingsId,
+          'seat_id': seatId,
+          'seat_number': seat['seat_number'], // Add seat_number to the booking
+        });
+
+        // Update the seat to mark it as booked
+        await supabaseClient
+            .from('seats')
+            .update({'is_booked': true, 'last_updated': DateTime.now().toIso8601String()})
+            .eq('id', seatId);
+      }
+
+      setState(() {
+        selectedSeats.clear(); // Clear selected seats after reservation
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Seats reserved successfully!')),
+      );
+    } catch (error) {
+      print('Error reserving seats: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to reserve seats. Please try again.')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -208,80 +237,20 @@ Future<void> reserveSeats(String cinemaSettingsId) async {
                   children: [
                     // Movie Title
                     Text(
-                      widget.movie.title, // Dynamically displaying the movie title
+                      widget.movie.title,
                       style: GoogleFonts.lexend(
                           fontSize: 28,
                           color: Color(0xFFE2F1EB),
                           fontWeight: FontWeight.w800),
                     ),
-                    SizedBox(height: 10),
-                    // Screen Label
-                    Text(
-                      'Screen',
-                      style: GoogleFonts.lexend(fontSize: 14, color: Color(0xFFE2F1EB)),
-                      textAlign: TextAlign.center,
-                    ),
-                    Image.asset(
-                      'images/icons/Screen.png',
-                      width: 350,
-                      height: 30,
-                    ),
                     SizedBox(height: 20),
-                    // Seat Grid with walkway
-                    Container(
-  height: 400,
-  width: double.infinity,
-  child: GridView.builder(
-    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: 11, // 10 seats + 1 walkway
-      crossAxisSpacing: 8.0,
-      mainAxisSpacing: 8.0,
-    ),
-    itemCount: 55, // Number of seats (e.g., 50 seats + 5 walkway spaces)
-    itemBuilder: (context, index) {
-      if ((index + 1) % 11 == 6) {
-        // Create empty space for walkway
-        return Container();
-      }
-      String seatNumber = ((index ~/ 11) * 10 + (index % 11 >= 6 ? index % 11 - 1 : index % 11) + 1).toString();
-      bool isSelected = selectedSeats.contains(seatNumber);
-      bool isBooked = bookedSeats.contains(seatNumber);
-
-      return GestureDetector(
-        onTap: () {
-          if (!isBooked) {
-            setState(() {
-              if (isSelected) {
-                selectedSeats.remove(seatNumber); // Deselect seat
-              } else if (selectedSeats.length < maxSeats) {
-                selectedSeats.add(seatNumber); // Select seat
-              }
-            });
-          }
-        },
-        child: Icon(
-          Icons.event_seat,
-          color: isBooked
-              ? Colors.red // Booked seats will be red
-              : isSelected
-                  ? Color(0xff40E49F) // Selected seats
-                  : Colors.grey[800], // Available seats
-          size: 30,
-        ),
-      );
-    },
-  ),
-),
-
-                    SizedBox(height: 20), // Spacing between seat grid and dropdowns
-                    // Location Dropdown
                     DropdownButtonFormField<String>(
                       dropdownColor: Color(0xFF07130E),
                       decoration: InputDecoration(
                         labelText: 'Location',
                         filled: true,
                         fillColor: Color(0xFF07130E),
-                        labelStyle: GoogleFonts.lexend(color: Color(0xFFE2F1EB)), // Change the label color here
+                        labelStyle: GoogleFonts.lexend(color: Color(0xFFE2F1EB)),
                       ),
                       items: locationNames.map((locationName) {
                         return DropdownMenuItem(
@@ -293,69 +262,46 @@ Future<void> reserveSeats(String cinemaSettingsId) async {
                       onChanged: (value) {
                         setState(() {
                           selectedLocation = value;
-                          // Find the UUID for the selected location name
                           String? locationId = locations
                               .firstWhere((location) => location['name'] == value)['id'];
-
-                          // Fetch settings for the selected location UUID
-                          fetchSettings(locationId!);
+                          fetchAvailableDates(locationId!);
                         });
                       },
                     ),
-                    SizedBox(height: 10),
-                    if (selectedLocation != null) ...[
-                      // Updated Calendar Widget for Dates
-                      Text(
-                        'Select Available Date',
-                        style: GoogleFonts.lexend(fontSize: 18, color: Color(0xFFE2F1EB)),
-                      ),
-                      TableCalendar(
-                        firstDay: DateTime.now(),
-                        lastDay: DateTime.now().add(Duration(days: 365)),
-                        focusedDay: selectedDate ?? DateTime.now(),
-                        availableCalendarFormats: const {
-                          CalendarFormat.month: 'Month',
-                        },
-                        headerStyle: HeaderStyle(
-                          titleTextStyle: GoogleFonts.lexend(color: Color(0xFFE2F1EB), fontSize: 20),
-                          formatButtonVisible: false,
-                          leftChevronIcon: Icon(Icons.chevron_left, color: Color(0xFFE2F1EB)),
-                          rightChevronIcon: Icon(Icons.chevron_right, color: Color(0xFFE2F1EB)),
+                    SizedBox(height: 20),
+                    if (availableDates.isNotEmpty) ...[
+                      DropdownButtonFormField<DateTime>(
+                        dropdownColor: Color(0xFF07130E),
+                        decoration: InputDecoration(
+                          labelText: 'Available Dates',
+                          filled: true,
+                          fillColor: Color(0xFF07130E),
+                          labelStyle: GoogleFonts.lexend(color: Color(0xFFE2F1EB)),
                         ),
-                        calendarBuilders: CalendarBuilders(
-                          defaultBuilder: (context, day, focusedDay) {
-                            if (availableDates.any((availableDate) => isSameDay(availableDate, day))) {
-                              return Container(
-                                margin: const EdgeInsets.all(4.0),
-                                decoration: BoxDecoration(
-                                  color: Color(0xFF40E49F),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    '${day.day}',
-                                    style: GoogleFonts.lexend(color: Colors.white),
-                                  ),
-                                ),
-                              );
-                            } else {
-                              return Center(
-                                child: Text('${day.day}'),
-                              );
+                        items: availableDates.map((date) {
+                          return DropdownMenuItem(
+                            value: date,
+                            child: Text(
+                              '${date.day}/${date.month}/${date.year}',
+                              style: GoogleFonts.lexend(color: Color(0xFFE2F1EB)),
+                            ),
+                          );
+                        }).toList(),
+                        value: selectedDate,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedDate = value;
+                            if (selectedLocation != null && selectedDate != null) {
+                              String? locationId = locations
+                                  .firstWhere((location) => location['name'] == selectedLocation)['id'];
+                              fetchSettings(locationId!, selectedDate!);
                             }
-                          },
-                        ),
-                        selectedDayPredicate: (day) => isSameDay(selectedDate, day),
-                        onDaySelected: (selectedDay, focusedDay) {
-                          if (availableDates.any((availableDate) => isSameDay(availableDate, selectedDay))) {
-                            setState(() {
-                              selectedDate = selectedDay; // Properly assign selectedDay as DateTime
-                            });
-                          }
+                          });
                         },
                       ),
-                      SizedBox(height: 10),
-                      // Format Dropdown
+                      SizedBox(height: 20),
+                    ],
+                    if (selectedCinemaSettingsId != null) ...[
                       DropdownButtonFormField<String>(
                         dropdownColor: Color(0xFF07130E),
                         decoration: InputDecoration(
@@ -373,11 +319,12 @@ Future<void> reserveSeats(String cinemaSettingsId) async {
                             : null,
                         value: selectedFormat,
                         onChanged: formats.isNotEmpty
-                            ? (value) => setState(() => selectedFormat = value)
+                            ? (value) => setState(() {
+                                selectedFormat = value;
+                              })
                             : null,
                       ),
-                      SizedBox(height: 10),
-                      // Schedule Dropdown
+                      SizedBox(height: 20),
                       DropdownButtonFormField<String>(
                         dropdownColor: Color(0xFF07130E),
                         decoration: InputDecoration(
@@ -395,46 +342,125 @@ Future<void> reserveSeats(String cinemaSettingsId) async {
                             : null,
                         value: selectedTime,
                         onChanged: times.isNotEmpty
-                            ? (value) => setState(() => selectedTime = value)
+                            ? (value) {
+                                setState(() {
+                                  selectedTime = value;
+                                  // Fetch available seats when a schedule is selected
+                                  if (selectedCinemaSettingsId != null) {
+                                    fetchAvailableSeats(selectedCinemaSettingsId!);
+                                  }
+                                });
+                              }
                             : null,
                       ),
-
-                      SizedBox(height: 10),
-                      Text(
-                        "Total Price: ₱\${(selectedSeats.length * ticketPrice).toStringAsFixed(2)}",
-                        style: GoogleFonts.lexend(fontSize: 20, color: Color(0xFFE2F1EB)),
+                      SizedBox(height: 20),
+                      Container(
+                        margin: EdgeInsets.only(bottom: 20),
+                        child: Column(
+                          children: [
+                            Text('Screen', style: GoogleFonts.lexend(fontSize: 16, color: Color(0xFFE2F1EB))),
+                            SizedBox(height: 10),
+                            ClipPath(
+                              clipper: ArcClipper(),
+                              child: Container(
+                                height: 20,
+                                width: MediaQuery.of(context).size.width * 0.6,
+                                color: Color(0xFFE2F1EB),
+                              ),
+                            ),
+                            SizedBox(height: 20),
+                          ],
+                        ),
                       ),
+                      if (availableSeats.isNotEmpty) ...[
+                        Text('Select Available Seats', style: GoogleFonts.lexend(fontSize: 18, color: Color(0xFFE2F1EB))),
+                        Wrap(
+                          spacing: 8.0,
+                          runSpacing: 8.0,
+                          children: availableSeats.map((seat) {
+                            bool isSelected = selectedSeats.contains(seat['id']);
+                            bool isBooked = seat['is_booked'] as bool;
 
-                      SizedBox(height: 10),
-ElevatedButton(
-  onPressed: (selectedLocation != null &&
-              selectedDate != null &&
-              selectedFormat != null &&
-              selectedTime != null &&
-              selectedSeats.isNotEmpty &&
-              selectedCinemaSettingsId != null) // Make sure cinemaSettingsId is not null
-      ? () {
-          reserveSeats(selectedCinemaSettingsId!); // Pass the selected cinemaSettingsId
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => PaymentScreen(),
-            ),
-          );
-        }
-      : null,
-  child: Text('Proceed'),
-  style: ElevatedButton.styleFrom(
-    backgroundColor: Color(0xFF8CDDBB),
-    foregroundColor: Color(0xFF07130E),
-    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-  ),
-),
+                            return GestureDetector(
+                              onTap: isBooked
+                                  ? null // Disable tap if the seat is already booked
+                                  : () {
+                                      setState(() {
+                                        if (isSelected) {
+                                          selectedSeats.remove(seat['id']);
+                                        } else {
+                                          selectedSeats.add(seat['id']);
+                                        }
+                                      });
+                                    },
+                              child: Column(
+                                children: [
+                                  Icon(
+                                    Icons.event_seat,
+                                    size: 30,
+                                    color: isBooked
+                                        ? Colors.red // Booked seats are red
+                                        : isSelected
+                                            ? Color(0xFF8CDDBB) // Selected seats are greenish
+                                            : Color(0xFFE2F1EB), // Available seats are white
+                                  ),
+                                  SizedBox(height: 2),
+                                  Text(
+                                    seat['seat_number'],
+                                    style: GoogleFonts.lexend(
+                                      fontSize: 8,
+                                      color: isBooked ? Colors.red : Color(0xFFE2F1EB),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                        SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: selectedSeats.isNotEmpty
+                              ? () {
 
+                                  reserveSeats(selectedCinemaSettingsId!);
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => PaymentScreen(),
+                                    ),
+                                  );
+                                }
+                              : null,
+                          child: Text('Proceed'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF8CDDBB),
+                            foregroundColor: Color(0xFF07130E),
+                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                          ),
+                        ),
+                      ],
                     ],
                   ],
                 ),
               ),
             ),
     );
+  }
+}
+
+class ArcClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    path.moveTo(0, size.height);
+    path.quadraticBezierTo(size.width / 2, 0, size.width, size.height);
+    path.lineTo(size.width, 0);
+    path.lineTo(0, 0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return false;
   }
 }
