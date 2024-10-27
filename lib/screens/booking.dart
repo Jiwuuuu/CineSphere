@@ -3,9 +3,6 @@ import 'package:cinesphere/main.dart';
 import 'package:cinesphere/screens/movie.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/rendering.dart';
-import 'dart:ui' as ui;
 
 final supabaseClient = SupabaseService().client;
 

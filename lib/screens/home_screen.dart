@@ -1,11 +1,13 @@
 import 'package:cinesphere/database/supabase_service.dart';
 import 'package:cinesphere/main.dart';
+import 'package:cinesphere/screens/tickets.dart';
 import 'package:flutter/material.dart';
 import 'package:cinesphere/screens/movie.dart';
 import 'package:cinesphere/screens/moviedesc_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:carousel_slider/carousel_slider.dart'; // Add this package for carousel functionality
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cinesphere/screens/more.dart';
 
 final supabaseClient = SupabaseService().client;
 
@@ -20,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   @override
   bool get wantKeepAlive => true;
   late TabController _tabController;
+  String _selectedTab = "Home";
 
   @override
   void initState() {
@@ -29,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       backgroundColor: bg_color,
       appBar: AppBar(
@@ -106,7 +110,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             bottom: 20, // Adjust distance from the bottom
             left: MediaQuery.of(context).size.width * 0.1, // Center it horizontally
             right: MediaQuery.of(context).size.width * 0.1,
-            child: BottomNavBar(), // New floating bottom navigation bar
+            child: BottomNavBar(
+              selectedTab: _selectedTab,
+              onTabSelected: (String tab) {
+                setState(() {
+                  _selectedTab = tab;
+                });
+              },
+            ),
           ),
         ],
       ),
@@ -249,6 +260,14 @@ Widget _buildCarouselSection(List<Movie> movies, BuildContext context) {
 
 // Floating bottom navigation bar widget
 class BottomNavBar extends StatelessWidget {
+  final String selectedTab;
+  final Function(String) onTabSelected;
+
+  const BottomNavBar({
+    required this.selectedTab,
+    required this.onTabSelected,
+  });
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -256,7 +275,7 @@ class BottomNavBar extends StatelessWidget {
 
     return Container(
       width: containerWidth,
-      height: 70,
+      height: 90, // Increased height to accommodate text labels
       child: Stack(
         children: [
           // The shadow box
@@ -283,52 +302,107 @@ class BottomNavBar extends StatelessWidget {
               ],
             ),
           ),
-          // Icons as images
+          // Icons as images with text labels and underline if selected
           Positioned(
             left: containerWidth * 0.1,
-            top: 24,
-            child: GestureDetector(
-              onTap: () {
-                // Navigate to favorites
-              },
-              child: Image.asset(
-                'images/icons/favourite.png',
-                width: 22,
-                height: 22,
-              ),
+            top: 16,
+            child: Column(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    onTabSelected("Ticket");
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => TicketScreen()),
+                    );
+                  },
+                  child: Image.asset(
+                    'images/icons/transaction.png',
+                    width: 22,
+                    height: 22,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "Tickets",
+                  style: GoogleFonts.lexend(
+                    color: Color(0xffFFFFFF),
+                    fontSize: 12,
+                  ),
+                ),
+                if (selectedTab == "Tickets")
+                  Container(
+                    width: 40,
+                    height: 2,
+                    color: header_text,
+                  ),
+              ],
             ),
           ),
           Positioned(
             left: containerWidth * 0.45,
-            top: 24,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => HomeScreen(),
+            top: 16,
+            child: Column(
+              children: [
+                GestureDetector(
+                  onTap: () => onTabSelected("Home"),
+                  child: Image.asset(
+                    'images/icons/home.png',
+                    width: 22,
+                    height: 22,
                   ),
-                );
-              },
-              child: Image.asset(
-                'images/icons/home.png',
-                width: 22,
-                height: 22,
-              ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "Home",
+                  style: GoogleFonts.lexend(
+                    color: Color(0xffFFFFFF),
+                    fontSize: 12,
+                  ),
+                ),
+                if (selectedTab == "Home")
+                  Container(
+                    width: 40,
+                    height: 2,
+                    color: header_text,
+                  ),
+              ],
             ),
           ),
           Positioned(
             left: containerWidth * 0.8,
-            top: 24,
-            child: GestureDetector(
-              onTap: () {
-                // navigate to transactions
-              },
-              child: Image.asset(
-                'images/icons/transaction.png',
-                width: 22,
-                height: 22,
-              ),
+            top: 16,
+            child: Column(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    onTabSelected("More");
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => MoreScreen()),
+                    );
+                  },
+                  child: Image.asset(
+                    'images/icons/mores.png',
+                    width: 22,
+                    height: 22,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "More",
+                  style: GoogleFonts.lexend(
+                    color: Color(0xffFFFFFF),
+                    fontSize: 12,
+                  ),
+                ),
+                if (selectedTab == "More")
+                  Container(
+                    width: 40,
+                    height: 2,
+                    color: header_text,
+                  ),
+              ],
             ),
           ),
         ],

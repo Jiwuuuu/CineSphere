@@ -31,7 +31,7 @@ class _WelcomeManagerState extends State<WelcomeManager> {
         children: [
           Expanded(child: _buildWelcomeScreen()),
           _buildDots(),
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
         ],
       ),
     );
@@ -56,8 +56,8 @@ class _WelcomeManagerState extends State<WelcomeManager> {
       children: List.generate(3, (index) {
         return Container(
           margin: const EdgeInsets.symmetric(horizontal: 5),
-          width: 8,
-          height: 8,
+          width: 10,
+          height: 10,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: _currentScreen == index ? const Color(0xFF39C55C) : Colors.grey,
@@ -68,7 +68,6 @@ class _WelcomeManagerState extends State<WelcomeManager> {
   }
 }
 
-// Welcome screens remain the same
 class WelcomeScreen1 extends StatelessWidget {
   final VoidCallback onNext;
 
@@ -82,7 +81,7 @@ class WelcomeScreen1 extends StatelessWidget {
         Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('images/welcome.jpeg'),
+              image: AssetImage('images/welcome_pic1.png'),
               fit: BoxFit.cover,
             ),
           ),
@@ -91,7 +90,7 @@ class WelcomeScreen1 extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Colors.black.withOpacity(0.1),
+                Colors.black.withOpacity(0.7),
                 Colors.transparent,
               ],
               begin: Alignment.bottomCenter,
@@ -99,30 +98,65 @@ class WelcomeScreen1 extends StatelessWidget {
             ),
           ),
         ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(height: 400), // Adjust this as needed
-            const Text("Welcome to",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
-            const Text("CineSphere",
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 57, 197, 92))),
-            const Text("Your go-to movie ticket app.",
-                style: TextStyle(fontSize: 14, color: Colors.white)),
-            const Spacer(),
-            ElevatedButton(
-              onPressed: onNext,
-              child: const Text("Next", style: TextStyle(color: Colors.black)),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 57, 197, 92),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  Text(
+                    "Welcome to",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    "CineSphere",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 55,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF39C55C),
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    "Your go-to movie ticket app.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 300), // Reduced space before the dots
-          ],
+              const SizedBox(height: 30),
+              ElevatedButton(
+                onPressed: onNext,
+                child: const Text(
+                  "Next",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF39C55C),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 18),
+                ),
+              ),
+              const SizedBox(height: 40),
+            ],
+          ),
         ),
       ],
     );
@@ -142,7 +176,7 @@ class WelcomeScreen2 extends StatelessWidget {
         Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('images/The Nun II.jpeg'),
+              image: AssetImage('images/welcome_pic2.png'),
               fit: BoxFit.cover,
             ),
           ),
@@ -159,28 +193,55 @@ class WelcomeScreen2 extends StatelessWidget {
             ),
           ),
         ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(height: 400), // Adjust this as needed
-            const Text("Browse & Book Fast",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 57, 197, 92))),
-            const Text("Find movies, check times, book instantly.",
-                style: TextStyle(fontSize: 14, color: Colors.white)),
-            const Spacer(),
-            ElevatedButton(
-              onPressed: onNext,
-              child: const Text("Next", style: TextStyle(color: Colors.black)),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 57, 197, 92),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  Text(
+                    "Browse & Book Fast",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF39C55C),
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    "Find movies, check times, book instantly.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 300), // Reduced space before the dots
-          ],
+              const SizedBox(height: 30),
+              ElevatedButton(
+                onPressed: onNext,
+                child: const Text(
+                  "Next",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF39C55C),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 18),
+                ),
+              ),
+              const SizedBox(height: 40),
+            ],
+          ),
         ),
       ],
     );
@@ -200,7 +261,7 @@ class WelcomeScreen3 extends StatelessWidget {
         Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('images/Osaka.jpeg'),
+              image: AssetImage('images/welcome_pic3.png'),
               fit: BoxFit.cover,
             ),
           ),
@@ -217,28 +278,55 @@ class WelcomeScreen3 extends StatelessWidget {
             ),
           ),
         ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(height: 400), // Adjust this as needed
-            const Text("Secure Payments",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 57, 197, 92))),
-            const Text("Pay safely with various methods.",
-                style: TextStyle(fontSize: 14, color: Colors.white)),
-            const Spacer(),
-            ElevatedButton(
-              onPressed: onNext,
-              child: const Text("Get Started", style: TextStyle(color: Colors.black)),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 57, 197, 92),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  Text(
+                    "Secure Payments",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF39C55C),
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    "Pay safely with various methods.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 300), // Reduced space before the dots
-          ],
+              const SizedBox(height: 30),
+              ElevatedButton(
+                onPressed: onNext,
+                child: const Text(
+                  "Get Started",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF39C55C),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 18),
+                ),
+              ),
+              const SizedBox(height: 40),
+            ],
+          ),
         ),
       ],
     );
