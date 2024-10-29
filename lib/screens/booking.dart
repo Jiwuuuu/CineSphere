@@ -1,11 +1,8 @@
 import 'package:cinesphere/database/supabase_service.dart';
-import 'package:cinesphere/main.dart';
+import 'package:cinesphere/payment_summary.dart';
 import 'package:cinesphere/screens/movie.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/rendering.dart';
-import 'dart:ui' as ui;
 
 final supabaseClient = SupabaseService().client;
 
@@ -147,73 +144,34 @@ class _BookingScreenState extends State<BookingScreen> {
     }
   }
 
-  Future<void> fetchAvailableSeats(String cinemaSettingsId) async {
+Future<void> fetchAvailableSeats(String cinemaSettingsId) async {
+  setState(() {
+    isLoading = true;
+    availableSeats.clear(); // Clear previous seats data
+    selectedSeats.clear(); // Clear selected seats
+  });
+
+  try {
+    final response = await supabaseClient
+        .from('seats')
+        .select()
+        .eq('cinema_settings_id', cinemaSettingsId);
+
     setState(() {
-      isLoading = true;
-      availableSeats.clear(); // Clear previous seats data
-      selectedSeats.clear(); // Clear selected seats
+      availableSeats = List<Map<String, dynamic>>.from(response);
+
+      // Sort availableSeats by seat_number for consistent ordering
+      availableSeats.sort((a, b) => a['seat_number'].compareTo(b['seat_number']));
     });
-
-    try {
-      final response = await supabaseClient
-          .from('seats')
-          .select()
-          .eq('cinema_settings_id', cinemaSettingsId);
-
-      setState(() {
-        availableSeats = List<Map<String, dynamic>>.from(response);
-
-        // Sort availableSeats by seat_number for consistent ordering
-        availableSeats.sort((a, b) => a['seat_number'].compareTo(b['seat_number']));
-      });
-    } catch (error) {
-      print('Error fetching available seats: $error');
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
-    }
+  } catch (error) {
+    print('Error fetching available seats: $error');
+  } finally {
+    setState(() {
+      isLoading = false;
+    });
   }
+}
 
-  Future<void> reserveSeats(String cinemaSettingsId) async {
-    try {
-      for (String seatId in selectedSeats) {
-        // Get seat details
-        final seat = availableSeats.firstWhere((seat) => seat['id'] == seatId);
-
-        // Insert a booking into the bookings table
-        await supabaseClient.from('bookings').insert({
-          'movie_id': widget.movie.id,
-          'location': selectedLocation,
-          'date': selectedDate?.toIso8601String(),
-          'screen_type': selectedFormat,
-          'schedule_time': selectedTime,
-          'cinema_settings_id': cinemaSettingsId,
-          'seat_id': seatId,
-          'seat_number': seat['seat_number'], // Add seat_number to the booking
-        });
-
-        // Update the seat to mark it as booked
-        await supabaseClient
-            .from('seats')
-            .update({'is_booked': true, 'last_updated': DateTime.now().toIso8601String()})
-            .eq('id', seatId);
-      }
-
-      setState(() {
-        selectedSeats.clear(); // Clear selected seats after reservation
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Seats reserved successfully!')),
-      );
-    } catch (error) {
-      print('Error reserving seats: $error');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to reserve seats. Please try again.')),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -418,25 +376,45 @@ class _BookingScreenState extends State<BookingScreen> {
                           }).toList(),
                         ),
                         SizedBox(height: 20),
-                        ElevatedButton(
-                          onPressed: selectedSeats.isNotEmpty
-                              ? () {
+ElevatedButton(
+  onPressed: selectedSeats.isNotEmpty
+      ? () async {
+          List<String> selectedSeatNumbers = selectedSeats.map((seatId) {
+            return availableSeats.firstWhere((seat) => seat['id'] == seatId)['seat_number'] as String;
+          }).toList();
 
-                                  reserveSeats(selectedCinemaSettingsId!);
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => PaymentScreen(),
-                                    ),
-                                  );
-                                }
-                              : null,
-                          child: Text('Proceed'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF8CDDBB),
-                            foregroundColor: Color(0xFF07130E),
-                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                          ),
-                        ),
+          // Await the result from PaymentSummaryScreen
+          await Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => PaymentSummaryScreen(
+                movieTitle: widget.movie.title,
+                movieId: widget.movie.id,
+                date: selectedDate!,
+                format: selectedFormat!,
+                scheduleTime: selectedTime!,
+                seats: selectedSeatNumbers,
+                pricePerTicket: widget.movie.price,
+                selectedCinemaSettingsId: selectedCinemaSettingsId!,
+                selectedLocation: selectedLocation!,
+                availableSeats: availableSeats,
+                selectedSeats: selectedSeats,
+              ),
+            ),
+          );
+
+          // Refresh seat availability after coming back
+          if (selectedCinemaSettingsId != null) {
+            await fetchAvailableSeats(selectedCinemaSettingsId!);
+          }
+        }
+      : null,
+  child: Text('Proceed'),
+  style: ElevatedButton.styleFrom(
+    backgroundColor: Color(0xFF8CDDBB),
+    foregroundColor: Color(0xFF07130E),
+    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+  ),
+),
                       ],
                     ],
                   ],

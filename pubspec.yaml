@@ -37,7 +37,6 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  shared_preferences: ^2.3.2
   supabase_flutter: ^2.7.0
   carousel_slider: ^5.0.0
   provider: ^6.1.2
@@ -45,6 +44,10 @@ dependencies:
   cached_network_image: ^3.3.1
   sqflite_common_ffi: ^2.3.3+1
   table_calendar: ^3.0.6
+  uuid: ^3.0.6
+  path_provider: ^2.0.11
+  shared_preferences: ^2.0.13
+  lottie: ^1.4.0
 
 dev_dependencies:
   flutter_test:
@@ -76,6 +79,11 @@ flutter:
     - images/icons/home.png
     - images/icons/transaction.png
     - images/icons/Screen.png
+    - images/icons/tickets.png
+    - images/icons/more.png
+    - images/CineSphere - Mobile App - Abous Us.png
+    - assets/animations/loading_animation.json
+    - images/CineSphere - Mobile App - Terms of Service.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

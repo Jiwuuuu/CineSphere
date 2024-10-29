@@ -24,18 +24,6 @@ class _MovieDescScreenState extends State<MovieDescScreen> {
   @override
   void initState() {
     super.initState();
-    isFavorite = FavoritesManager.instance.isFavorite(widget.movie.title);
-  }
-
-  void _toggleFavorite() {
-    setState(() {
-      if (isFavorite) {
-        FavoritesManager.instance.removeMovie(widget.movie.title);
-      } else {
-        FavoritesManager.instance.addMovie(widget.movie.title);
-      }
-      isFavorite = !isFavorite;
-    });
   }
 
   void _toggleDescription() {
@@ -116,25 +104,6 @@ class _MovieDescScreenState extends State<MovieDescScreen> {
                       ),
                     ),
                   ),
-                  Positioned(
-                    top: 20,
-                    right: 20,
-                    child: IconButton(
-                      onPressed: _toggleFavorite,
-                      icon: Icon(
-                        isFavorite ? Icons.bookmark : Icons.bookmark_border,
-                        color: Color(0xFFE2F1EB),
-                        size: 28,
-                        shadows: [
-                          Shadow(
-                            offset: Offset(2.0, 2.0),
-                            blurRadius: 4.0,
-                            color: Colors.black,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
                 ],
               ),
               Padding(
@@ -164,17 +133,18 @@ class _MovieDescScreenState extends State<MovieDescScreen> {
                         fontWeight: FontWeight.w300,
                       ),
                     ),
-                    if (widget.movie.description.length > 100) GestureDetector(
-                      onTap: _toggleDescription,
-                      child: Text(
-                        isDescriptionExpanded ? 'Read Less' : 'Read More',
-                        style: GoogleFonts.lexend(
-                          color: Color(0xFFE2F1EB),
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
+                    if (widget.movie.description.length > 100)
+                      GestureDetector(
+                        onTap: _toggleDescription,
+                        child: Text(
+                          isDescriptionExpanded ? 'Read Less' : 'Read More',
+                          style: GoogleFonts.lexend(
+                            color: Color(0xFFE2F1EB),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
-                    ),
                     SizedBox(height: 10),
                     _buildMovieDetailRow('Genre', widget.movie.genre),
                     _buildMovieDetailRow('Director', widget.movie.director),
@@ -203,38 +173,40 @@ class _MovieDescScreenState extends State<MovieDescScreen> {
                       ],
                     ),
                     SizedBox(height: 10),
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => BookingScreen(movie: widget.movie),
+                    // Conditionally render the "Book Now" button based on the movie's status
+                    if (widget.movie.status != 'Coming Soon')
+                      Center(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BookingScreen(movie: widget.movie),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF8CDDBB),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 40,
+                              vertical: 16,
                             ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF8CDDBB),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 40,
-                            vertical: 16,
+                            textStyle: GoogleFonts.lexend(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w400,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(9),
+                            ),
                           ),
-                          textStyle: GoogleFonts.lexend(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w400,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(9),
-                          ),
-                        ),
-                        child: Text(
-                          'Book Now',
-                          style: GoogleFonts.lexend(
-                            color: Colors.black,
+                          child: Text(
+                            'Book Now',
+                            style: GoogleFonts.lexend(
+                              color: Colors.black,
+                            ),
                           ),
                         ),
                       ),
-                    ),
                   ],
                 ),
               ),

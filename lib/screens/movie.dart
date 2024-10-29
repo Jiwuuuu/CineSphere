@@ -1,5 +1,5 @@
 class Movie {
-  final String id; // Added movie ID
+  final String id; // Movie ID
   final String title;
   final String genre;
   final String director;
@@ -8,10 +8,11 @@ class Movie {
   final String description;
   final String poster_url;
   final String trailer_link;
-  final String status; // New field for movie status
+  final String status;
+  final int price; // New field for movie price
 
   Movie({
-    required this.id, // Added required movie ID
+    required this.id,
     required this.title,
     required this.genre,
     required this.director,
@@ -21,12 +22,13 @@ class Movie {
     required this.poster_url,
     required this.trailer_link,
     required this.status,
+    required this.price, // Added price
   });
 
   // Factory constructor to create a Movie instance from a map
   factory Movie.fromMap(Map<String, dynamic> movieData) {
     return Movie(
-      id: movieData['id'], // Added ID from map
+      id: movieData['id'],
       title: movieData['title'],
       genre: movieData['genre'],
       director: movieData['director'],
@@ -36,6 +38,7 @@ class Movie {
       poster_url: movieData['poster_url'],
       trailer_link: movieData['trailer_link'],
       status: movieData['status'],
+      price: movieData['price'], // Added price from map
     );
   }
 
