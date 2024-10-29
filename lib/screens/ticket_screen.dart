@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cinesphere/database/local_storage_service.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:lottie/lottie.dart';
 
 class TicketScreen extends StatefulWidget {
@@ -57,18 +58,17 @@ class _TicketScreenState extends State<TicketScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        // Prevent the double back issue by ensuring we only pop the current route once.
         Navigator.pop(context);
-        return false; // Return false to indicate we handled the pop manually.
+        return false;
       },
       child: Scaffold(
-        backgroundColor: Color(0xFF07130E), // Background color
+        backgroundColor: Color(0xFF07130E),
         appBar: AppBar(
           backgroundColor: Color(0xFF07130E),
           title: Text(
             'My Tickets',
             style: GoogleFonts.lexend(
-              color: Color(0xFFE2F1EB), // Text color
+              color: Color(0xFFE2F1EB),
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -117,7 +117,7 @@ class _TicketScreenState extends State<TicketScreen> {
                           'No tickets found.',
                           style: GoogleFonts.lexend(
                             fontSize: 20,
-                            color: Color(0xFFE2F1EB), // Text color
+                            color: Color(0xFFE2F1EB),
                           ),
                         ),
                       )
@@ -125,8 +125,10 @@ class _TicketScreenState extends State<TicketScreen> {
                         itemCount: _transactions.length,
                         itemBuilder: (context, index) {
                           final transaction = _transactions[index];
+                          final qrData = transaction['transaction_id'] + transaction['movie_title']; // Create unique QR data
+                          
                           return Card(
-                            color: Color(0xFF1F9060), // Secondary color for ticket cards
+                            color: Color(0xFF1F9060),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15),
                             ),
@@ -140,7 +142,7 @@ class _TicketScreenState extends State<TicketScreen> {
                                     transaction['movie_title'],
                                     style: GoogleFonts.lexend(
                                       fontSize: 22,
-                                      color: Color(0xFFE2F1EB), // Text color
+                                      color: Color(0xFFE2F1EB),
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -148,28 +150,28 @@ class _TicketScreenState extends State<TicketScreen> {
                                   Text(
                                     'Date: ${transaction['date']}',
                                     style: GoogleFonts.lexend(
-                                      color: Color(0xFFE2F1EB), // Text color
+                                      color: Color(0xFFE2F1EB),
                                       fontSize: 16,
                                     ),
                                   ),
                                   Text(
                                     'Format: ${transaction['format']}',
                                     style: GoogleFonts.lexend(
-                                      color: Color(0xFFE2F1EB), // Text color
+                                      color: Color(0xFFE2F1EB),
                                       fontSize: 16,
                                     ),
                                   ),
                                   Text(
                                     'Schedule: ${transaction['schedule_time']}',
                                     style: GoogleFonts.lexend(
-                                      color: Color(0xFFE2F1EB), // Text color
+                                      color: Color(0xFFE2F1EB),
                                       fontSize: 16,
                                     ),
                                   ),
                                   Text(
                                     'Seats: ${transaction['seats'].join(', ')}',
                                     style: GoogleFonts.lexend(
-                                      color: Color(0xFFE2F1EB), // Text color
+                                      color: Color(0xFFE2F1EB),
                                       fontSize: 16,
                                     ),
                                   ),
@@ -181,20 +183,28 @@ class _TicketScreenState extends State<TicketScreen> {
                                         'Total: PHP ${transaction['amount']}',
                                         style: GoogleFonts.lexend(
                                           fontSize: 18,
-                                          color: Color(0xFF40E49F), // Accent color for total price
+                                          color: Color(0xFF40E49F),
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                       IconButton(
                                         icon: Icon(
                                           Icons.delete,
-                                          color: Colors.redAccent, // Delete icon color
+                                          color: Colors.redAccent,
                                         ),
                                         onPressed: () => _deleteTransaction(index),
                                         tooltip: 'Delete Ticket',
                                       ),
                                     ],
                                   ),
+                                  // Add QR code below the transaction details
+                                  SizedBox(height: 16),
+Center(
+  child: QrImageView(
+    data: qrData,
+    size: 150.0,
+  ),
+),
                                 ],
                               ),
                             ),
