@@ -64,97 +64,96 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
     }
   }
 
-  Future<void> storeTransactionInDatabase(List<String> bookingIds) async {
-    int retryCount = 0;
-    const maxRetries = 5; // Increase maxRetries to give more chances
-    const delayDuration = Duration(seconds: 3); // Increase delay to 3 seconds
+Future<void> storeTransactionInDatabase(List<String> bookingIds, String localTransactionId) async {
+  int retryCount = 0;
+  const maxRetries = 5; // Max retries
+  const delayDuration = Duration(seconds: 3); // Retry delay
 
-    while (retryCount < maxRetries) {
-      try {
-        // Insert a single transaction for all booking IDs
-        final response = await supabaseClient.from('transactions').insert({
-          'movie_id': widget.movieId,
-          'amount': totalAmount, // Total amount for the entire booking
-          'payment_status': 'Paid',
-        }).select(); // Select the newly created transaction to get its ID
+  while (retryCount < maxRetries) {
+    try {
+      // Insert a transaction into the transactions table
+      final response = await supabaseClient.from('transactions').insert({
+        'movie_id': widget.movieId,
+        'amount': totalAmount,
+        'payment_status': 'Paid',
+        'unique_code': localTransactionId, // Set the unique_code with the local transaction ID
+      }).select();
 
-        if (response != null && response.isNotEmpty) {
-          String transactionId = response[0]['id'];
+      if (response.isNotEmpty) {
+        String transactionId = response[0]['id'];
 
-          // Insert each booking ID into the transaction_bookings table
-          for (String bookingId in bookingIds) {
-            await supabaseClient.from('transaction_bookings').insert({
-              'transaction_id': transactionId,
-              'booking_id': bookingId,
-            });
-          }
-
-          print('Transaction and related bookings stored in database successfully');
-          break;
-        } else {
-          print('Failed to retrieve transaction ID after insert.');
-          retryCount++;
+        // Insert each booking ID into the transaction_bookings table
+        for (String bookingId in bookingIds) {
+          await supabaseClient.from('transaction_bookings').insert({
+            'transaction_id': transactionId,
+            'booking_id': bookingId,
+          });
         }
-      } catch (error) {
-        print('Error storing transaction in database: $error');
+
+        print('Transaction and bookings stored successfully.');
+        break;
+      } else {
+        print('Failed to retrieve transaction ID after insert.');
         retryCount++;
-        await Future.delayed(delayDuration);
       }
-    }
-
-    if (retryCount == maxRetries) {
-      print('Failed to store transaction in database after $maxRetries attempts.');
+    } catch (error) {
+      print('Error storing transaction in database: $error');
+      retryCount++;
+      await Future.delayed(delayDuration);
     }
   }
 
-  Future<void> onPaymentSuccess() async {
-    final bookingService = BookingService();
-
-    // Reserve Seats and get booking IDs
-    final bookingIds = await bookingService.reserveSeats(
-      widget.selectedCinemaSettingsId,
-      widget.movieId,
-      widget.selectedLocation,
-      widget.date,
-      widget.format,
-      widget.scheduleTime,
-      widget.availableSeats,
-      widget.selectedSeats,
-    );
-
-    // Check if we have valid booking IDs before proceeding
-    if (bookingIds.isEmpty) {
-      print('Failed to reserve seats. Cannot proceed with storing transaction.');
-      return;
-    }
-
-    // Delay to ensure bookings are fully committed
-    await Future.delayed(Duration(seconds: 3));
-
-    // Store a single transaction in both database and local storage
-    await storeTransactionInDatabase(bookingIds);
-
-    // Store in Local Storage
-    await _localStorageService.storeTransaction({
-      'transaction_id': DateTime.now().millisecondsSinceEpoch.toString(), // Add unique transaction ID
-      'movie_title': widget.movieTitle,
-      'movie_id': widget.movieId,
-      'date': widget.date.toIso8601String(),
-      'format': widget.format,
-      'schedule_time': widget.scheduleTime,
-      'seats': widget.seats,
-      'amount': totalAmount, // Total amount for the entire booking
-      'payment_status': 'Paid',
-    });
-
-    // Notify user about successful booking
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Payment successful! Seats reserved.')),
-    );
-
-    // Pop and return to the previous screen (BookingScreen)
-    Navigator.of(context).pop(); // This will trigger the refresh in BookingScreen
+  if (retryCount == maxRetries) {
+    print('Failed to store transaction in database after $maxRetries attempts.');
   }
+}
+
+Future<void> onPaymentSuccess() async {
+  final bookingService = BookingService();
+
+  // Reserve seats and get booking IDs
+  final bookingIds = await bookingService.reserveSeats(
+    widget.selectedCinemaSettingsId,
+    widget.movieId,
+    widget.selectedLocation,
+    widget.date,
+    widget.format,
+    widget.scheduleTime,
+    widget.availableSeats,
+    widget.selectedSeats,
+  );
+
+  // Ensure we have valid booking IDs
+  if (bookingIds.isEmpty) {
+    print('Failed to reserve seats. Cannot proceed with storing transaction.');
+    return;
+  }
+
+  // Generate a local unique transaction ID
+  String localTransactionId = DateTime.now().millisecondsSinceEpoch.toString();
+
+  // Store the transaction in Supabase with the unique_code set to the local ID
+  await storeTransactionInDatabase(bookingIds, localTransactionId);
+
+  // Store transaction locally
+  await _localStorageService.storeTransaction({
+    'transaction_id': localTransactionId, // Local unique transaction ID
+    'movie_title': widget.movieTitle,
+    'movie_id': widget.movieId,
+    'date': widget.date.toIso8601String(),
+    'format': widget.format,
+    'schedule_time': widget.scheduleTime,
+    'seats': widget.seats,
+    'amount': totalAmount,
+    'payment_status': 'Paid',
+  });
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text('Payment successful! Seats reserved.')),
+  );
+
+  Navigator.of(context).pop();
+}
 
   @override
   Widget build(BuildContext context) {

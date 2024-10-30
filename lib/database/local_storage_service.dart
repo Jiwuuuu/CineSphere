@@ -14,20 +14,23 @@ class LocalStorageService {
   Future<void> storeTransaction(Map<String, dynamic> transaction) async {
     final prefs = await SharedPreferences.getInstance();
     final List<Map<String, dynamic>> transactions = await getAllTransactions();
+
+    // Set the unique_code as the local transaction_id
+    transaction['unique_code'] = transaction['transaction_id'];
+
     transactions.add(transaction);
     await prefs.setString(_transactionsKey, json.encode(transactions));
   }
 
-  Future<void> deleteTransaction(String transactionId) async {
+  Future<void> deleteTransaction(String uniqueCode) async {
     final prefs = await SharedPreferences.getInstance();
     final List<Map<String, dynamic>> transactions = await getAllTransactions();
-    transactions.removeWhere((transaction) => transaction['transaction_id'] == transactionId);
+    transactions.removeWhere((transaction) => transaction['unique_code'] == uniqueCode);
     await prefs.setString(_transactionsKey, json.encode(transactions));
   }
 
-  // Add this function to clear all transactions
   Future<void> clearAllTransactions() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_transactionsKey); // Remove all transactions by deleting the key
+    await prefs.remove(_transactionsKey);
   }
 }

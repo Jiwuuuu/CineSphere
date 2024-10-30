@@ -33,7 +33,7 @@ class BookingService {
         }).select();
 
         // Only add the booking ID if it was successfully inserted
-        if (response != null && response.isNotEmpty) {
+        if (response.isNotEmpty) {
           bookingIds.add(response[0]['id']);
         } else {
           print('Failed to insert booking for seat ID $seatId');

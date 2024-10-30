@@ -3,6 +3,9 @@ import 'package:cinesphere/database/local_storage_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:lottie/lottie.dart';
+import 'dart:math';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class TicketScreen extends StatefulWidget {
   @override
@@ -11,6 +14,7 @@ class TicketScreen extends StatefulWidget {
 
 class _TicketScreenState extends State<TicketScreen> {
   final LocalStorageService _localStorageService = LocalStorageService();
+  final supabase = Supabase.instance.client;
   List<Map<String, dynamic>> _transactions = [];
   late Future<void> _transactionsLoadingFuture;
 
@@ -20,17 +24,56 @@ class _TicketScreenState extends State<TicketScreen> {
     _transactionsLoadingFuture = _loadTransactions();
   }
 
-  Future<void> _loadTransactions() async {
+Future<void> _loadTransactions() async {
+  try {
     final transactions = await _localStorageService.getAllTransactions();
+    final updatedTransactions = <Map<String, dynamic>>[];
+
+    for (var transaction in transactions) {
+      final localTransactionId = transaction['transaction_id'];
+
+      if (transaction['unique_code'] == null) {
+        // Update Supabase with local transaction_id as unique_code, matching by unique_code instead of id
+        await supabase
+            .from('transactions')
+            .update({'unique_code': localTransactionId})
+            .eq('unique_code', localTransactionId); // Match using unique_code column
+
+        transaction['unique_code'] = localTransactionId;
+      }
+
+      updatedTransactions.add(transaction);
+    }
+
     setState(() {
-      _transactions = transactions;
+      _transactions = updatedTransactions;
     });
+  } catch (e) {
+    print('Error in _loadTransactions: $e');
+    setState(() {
+      _transactionsLoadingFuture = Future.error(e);
+    });
+  }
+}
+
+// Helper function to validate UUID format
+bool _isValidUUID(String id) {
+  final uuidRegex = RegExp(
+    r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
+  );
+  return uuidRegex.hasMatch(id);
+}
+
+  String _generateUniqueCode() {
+    final random = Random();
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    return List.generate(6, (index) => characters[random.nextInt(characters.length)]).join();
   }
 
   Future<void> _clearAllTransactions() async {
     await _localStorageService.clearAllTransactions();
     setState(() {
-      _transactions.clear(); // Clear the state to update the UI
+      _transactions.clear();
     });
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -125,8 +168,9 @@ class _TicketScreenState extends State<TicketScreen> {
                         itemCount: _transactions.length,
                         itemBuilder: (context, index) {
                           final transaction = _transactions[index];
-                          final qrData = transaction['transaction_id'] + transaction['movie_title']; // Create unique QR data
-                          
+                          final qrData = transaction['transaction_id'] + transaction['movie_title'];
+                          final uniqueCode = transaction['unique_code'] ?? 'N/A';
+
                           return Card(
                             color: Color(0xFF1F9060),
                             shape: RoundedRectangleBorder(
@@ -197,14 +241,23 @@ class _TicketScreenState extends State<TicketScreen> {
                                       ),
                                     ],
                                   ),
-                                  // Add QR code below the transaction details
+                                  // Display the Unique Code
                                   SizedBox(height: 16),
-Center(
-  child: QrImageView(
-    data: qrData,
-    size: 150.0,
-  ),
-),
+                                  Text(
+                                    'Unique Code: $uniqueCode',
+                                    style: GoogleFonts.lexend(
+                                      fontSize: 16,
+                                      color: Color(0xFF8CDDBB),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 16),
+                                  Center(
+                                    child: QrImageView(
+                                      data: qrData,
+                                      size: 150.0,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
