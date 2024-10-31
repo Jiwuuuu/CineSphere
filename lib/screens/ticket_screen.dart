@@ -5,7 +5,6 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'dart:math';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class TicketScreen extends StatefulWidget {
   @override
@@ -24,50 +23,65 @@ class _TicketScreenState extends State<TicketScreen> {
     _transactionsLoadingFuture = _loadTransactions();
   }
 
-Future<void> _loadTransactions() async {
-  try {
-    final transactions = await _localStorageService.getAllTransactions();
-    final updatedTransactions = <Map<String, dynamic>>[];
+  Future<void> _loadTransactions() async {
+    try {
+      final transactions = await _localStorageService.getAllTransactions();
+      final updatedTransactions = <Map<String, dynamic>>[];
 
-    for (var transaction in transactions) {
-      final localTransactionId = transaction['transaction_id'];
+      for (var transaction in transactions) {
+        final localTransactionId = transaction['transaction_id'];
+        final movieId = transaction['movie_id'];
 
-      if (transaction['unique_code'] == null) {
-        // Update Supabase with local transaction_id as unique_code, matching by unique_code instead of id
-        await supabase
-            .from('transactions')
-            .update({'unique_code': localTransactionId})
-            .eq('unique_code', localTransactionId); // Match using unique_code column
+        // Fetch movie details
+        final movieResponse = await supabase
+            .from('movies')
+            .select()
+            .eq('id', movieId)
+            .single();
 
-        transaction['unique_code'] = localTransactionId;
+        // Fetch booking details; if multiple rows, handle accordingly
+        final bookingResponse = await supabase
+            .from('bookings')
+            .select('location, screen_type')
+            .eq('movie_id', movieId);
+
+        if (movieResponse != null) {
+          // Include additional details if fetched successfully
+          transaction['movie_title'] = movieResponse['title'];
+          transaction['genre'] = movieResponse['genre'];
+
+          // Use only the first booking details, if available
+          if (bookingResponse != null && bookingResponse.isNotEmpty) {
+            transaction['location'] = bookingResponse[0]['location'] ?? 'N/A';
+            transaction['screen_type'] = bookingResponse[0]['screen_type'] ?? 'Standard';
+          } else {
+            transaction['location'] = 'Unknown';
+            transaction['screen_type'] = 'Standard';
+          }
+        }
+
+        // Update unique_code if missing
+        if (transaction['unique_code'] == null) {
+          await supabase
+              .from('transactions')
+              .update({'unique_code': localTransactionId})
+              .eq('unique_code', localTransactionId);
+
+          transaction['unique_code'] = localTransactionId;
+        }
+
+        updatedTransactions.add(transaction);
       }
 
-      updatedTransactions.add(transaction);
+      setState(() {
+        _transactions = updatedTransactions;
+      });
+    } catch (e) {
+      print('Error in _loadTransactions: $e');
+      setState(() {
+        _transactionsLoadingFuture = Future.error(e);
+      });
     }
-
-    setState(() {
-      _transactions = updatedTransactions;
-    });
-  } catch (e) {
-    print('Error in _loadTransactions: $e');
-    setState(() {
-      _transactionsLoadingFuture = Future.error(e);
-    });
-  }
-}
-
-// Helper function to validate UUID format
-bool _isValidUUID(String id) {
-  final uuidRegex = RegExp(
-    r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
-  );
-  return uuidRegex.hasMatch(id);
-}
-
-  String _generateUniqueCode() {
-    final random = Random();
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    return List.generate(6, (index) => characters[random.nextInt(characters.length)]).join();
   }
 
   Future<void> _clearAllTransactions() async {
@@ -118,7 +132,9 @@ bool _isValidUUID(String id) {
           actions: [
             IconButton(
               icon: Icon(Icons.delete_forever, color: Color(0xFFE2F1EB)),
-              onPressed: _clearAllTransactions,
+              onPressed: () async {
+                await _clearAllTransactions();
+              },
               tooltip: 'Clear All Tickets',
             ),
           ],
@@ -183,7 +199,7 @@ bool _isValidUUID(String id) {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    transaction['movie_title'],
+                                    transaction['movie_title'] ?? 'Unknown Title',
                                     style: GoogleFonts.lexend(
                                       fontSize: 22,
                                       color: Color(0xFFE2F1EB),
@@ -192,6 +208,13 @@ bool _isValidUUID(String id) {
                                   ),
                                   SizedBox(height: 8),
                                   Text(
+                                    'Genre: ${transaction['genre'] ?? 'N/A'}',
+                                    style: GoogleFonts.lexend(
+                                      color: Color(0xFFE2F1EB),
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  Text(
                                     'Date: ${transaction['date']}',
                                     style: GoogleFonts.lexend(
                                       color: Color(0xFFE2F1EB),
@@ -199,14 +222,14 @@ bool _isValidUUID(String id) {
                                     ),
                                   ),
                                   Text(
-                                    'Format: ${transaction['format']}',
+                                    'Location: ${transaction['location'] ?? 'Unknown'}',
                                     style: GoogleFonts.lexend(
                                       color: Color(0xFFE2F1EB),
                                       fontSize: 16,
                                     ),
                                   ),
                                   Text(
-                                    'Schedule: ${transaction['schedule_time']}',
+                                    'Screen Type: ${transaction['screen_type'] ?? 'Standard'}',
                                     style: GoogleFonts.lexend(
                                       color: Color(0xFFE2F1EB),
                                       fontSize: 16,
@@ -241,7 +264,6 @@ bool _isValidUUID(String id) {
                                       ),
                                     ],
                                   ),
-                                  // Display the Unique Code
                                   SizedBox(height: 16),
                                   Text(
                                     'Unique Code: $uniqueCode',

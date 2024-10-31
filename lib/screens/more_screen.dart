@@ -1,4 +1,7 @@
 import 'package:cinesphere/screens/about_us_screen.dart';
+import 'package:cinesphere/screens/contact_us_screen.dart';
+import 'package:cinesphere/screens/faqs_screen.dart';
+import 'package:cinesphere/screens/feedback_screen.dart';
 import 'package:cinesphere/screens/terms_of_service_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -59,7 +62,10 @@ class _MoreScreenState extends State<MoreScreen> {
                       icon: Icons.feedback,
                       title: 'Feedback',
                       onTap: () {
-                        // Handle navigation to Feedback screen
+                        Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => FeedbackScreen()),
+                      );
                       },
                     ),
                     // Contact Us
@@ -68,7 +74,10 @@ class _MoreScreenState extends State<MoreScreen> {
                       icon: Icons.contact_phone,
                       title: 'Contact Us',
                       onTap: () {
-                        // Handle navigation to Contact Us screen
+                        Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ContactUsScreen()),
+                      );
                       },
                     ),
                     // FAQs
@@ -77,7 +86,10 @@ class _MoreScreenState extends State<MoreScreen> {
                       icon: Icons.help,
                       title: 'FAQs',
                       onTap: () {
-                        // Handle navigation to FAQs screen
+                        Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => FAQsScreen()),
+                      );
                       },
                     ),
                     // Terms of Service

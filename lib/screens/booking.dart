@@ -3,6 +3,7 @@ import 'package:cinesphere/payment_summary.dart';
 import 'package:cinesphere/screens/movie.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 final supabaseClient = SupabaseService().client;
 
@@ -119,7 +120,7 @@ class _BookingScreenState extends State<BookingScreen> {
           .eq('location_id', locationId)
           .eq('movie_id', widget.movie.id)
           .eq('available_date', date.toIso8601String().split('T').first);
-
+          
       if (response.isNotEmpty) {
         setState(() {
           selectedCinemaSettingsId = response[0]['id'] as String;
@@ -240,7 +241,7 @@ Future<void> fetchAvailableSeats(String cinemaSettingsId) async {
                           return DropdownMenuItem(
                             value: date,
                             child: Text(
-                              '${date.day}/${date.month}/${date.year}',
+                              DateFormat('MMMM d, yyyy').format(date), // Format as "Month Day, Year"
                               style: GoogleFonts.lexend(color: Color(0xFFE2F1EB)),
                             ),
                           );
@@ -283,34 +284,40 @@ Future<void> fetchAvailableSeats(String cinemaSettingsId) async {
                             : null,
                       ),
                       SizedBox(height: 20),
-                      DropdownButtonFormField<String>(
-                        dropdownColor: Color(0xFF07130E),
-                        decoration: InputDecoration(
-                          labelText: 'Schedule',
-                          filled: true,
-                          fillColor: Color(0xFF07130E),
-                          labelStyle: GoogleFonts.lexend(color: Color(0xFFE2F1EB)),
-                        ),
-                        items: times.isNotEmpty
-                            ? times.map((time) {
-                                return DropdownMenuItem(
+                        DropdownButtonFormField<String>(
+                          dropdownColor: Color(0xFF07130E),
+                          decoration: InputDecoration(
+                            labelText: 'Schedule',
+                            filled: true,
+                            fillColor: Color(0xFF07130E),
+                            labelStyle: GoogleFonts.lexend(color: Color(0xFFE2F1EB)),
+                          ),
+                          items: selectedFormat != null && times.isNotEmpty // Only enable if 'Watch In' selected
+                              ? times.map((time) {
+                                  DateTime parsedTime = DateFormat("HH:mm:ss").parse(time);
+                                  String formattedTime = DateFormat("h:mm a").format(parsedTime);
+
+                                  return DropdownMenuItem(
                                     value: time,
-                                    child: Text(time, style: GoogleFonts.lexend(color: Color(0xFFE2F1EB))));
-                              }).toList()
-                            : null,
-                        value: selectedTime,
-                        onChanged: times.isNotEmpty
-                            ? (value) {
-                                setState(() {
-                                  selectedTime = value;
-                                  // Fetch available seats when a schedule is selected
-                                  if (selectedCinemaSettingsId != null) {
-                                    fetchAvailableSeats(selectedCinemaSettingsId!);
-                                  }
-                                });
-                              }
-                            : null,
-                      ),
+                                    child: Text(
+                                      formattedTime,
+                                      style: GoogleFonts.lexend(color: Color(0xFFE2F1EB)),
+                                    ),
+                                  );
+                                }).toList()
+                              : null,
+                          value: selectedTime,
+                          onChanged: selectedFormat != null && times.isNotEmpty
+                              ? (value) {
+                                  setState(() {
+                                    selectedTime = value;
+                                    if (selectedCinemaSettingsId != null) {
+                                      fetchAvailableSeats(selectedCinemaSettingsId!);
+                                    }
+                                  });
+                                }
+                              : null,
+                        ),
                       SizedBox(height: 20),
                       Container(
                         margin: EdgeInsets.only(bottom: 20),
@@ -376,45 +383,44 @@ Future<void> fetchAvailableSeats(String cinemaSettingsId) async {
                           }).toList(),
                         ),
                         SizedBox(height: 20),
-ElevatedButton(
-  onPressed: selectedSeats.isNotEmpty
-      ? () async {
-          List<String> selectedSeatNumbers = selectedSeats.map((seatId) {
-            return availableSeats.firstWhere((seat) => seat['id'] == seatId)['seat_number'] as String;
-          }).toList();
+                        ElevatedButton(
+                          onPressed: selectedSeats.isNotEmpty && selectedLocation != null && selectedDate != null &&
+                                     selectedFormat != null && selectedTime != null
+                              ? () async {
+                                  List<String> selectedSeatNumbers = selectedSeats.map((seatId) {
+                                    return availableSeats.firstWhere((seat) => seat['id'] == seatId)['seat_number'] as String;
+                                  }).toList();
 
-          // Await the result from PaymentSummaryScreen
-          await Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => PaymentSummaryScreen(
-                movieTitle: widget.movie.title,
-                movieId: widget.movie.id,
-                date: selectedDate!,
-                format: selectedFormat!,
-                scheduleTime: selectedTime!,
-                seats: selectedSeatNumbers,
-                pricePerTicket: widget.movie.price,
-                selectedCinemaSettingsId: selectedCinemaSettingsId!,
-                selectedLocation: selectedLocation!,
-                availableSeats: availableSeats,
-                selectedSeats: selectedSeats,
-              ),
-            ),
-          );
+                                  await Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => PaymentSummaryScreen(
+                                        movieTitle: widget.movie.title,
+                                        movieId: widget.movie.id,
+                                        date: selectedDate!,
+                                        format: selectedFormat!,
+                                        scheduleTime: selectedTime!,
+                                        seats: selectedSeatNumbers,
+                                        pricePerTicket: widget.movie.price,
+                                        selectedCinemaSettingsId: selectedCinemaSettingsId!,
+                                        selectedLocation: selectedLocation!,
+                                        availableSeats: availableSeats,
+                                        selectedSeats: selectedSeats,
+                                      ),
+                                    ),
+                                    );
 
-          // Refresh seat availability after coming back
-          if (selectedCinemaSettingsId != null) {
-            await fetchAvailableSeats(selectedCinemaSettingsId!);
-          }
-        }
-      : null,
-  child: Text('Proceed'),
-  style: ElevatedButton.styleFrom(
-    backgroundColor: Color(0xFF8CDDBB),
-    foregroundColor: Color(0xFF07130E),
-    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-  ),
-),
+                                  if (selectedCinemaSettingsId != null) {
+                                    await fetchAvailableSeats(selectedCinemaSettingsId!);
+                                  }
+                                }
+                              : null, // Disable if any required field is missing
+                          child: Text('Proceed'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF8CDDBB),
+                            foregroundColor: Color(0xFF07130E),
+                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                          ),
+                        ),
                       ],
                     ],
                   ],
