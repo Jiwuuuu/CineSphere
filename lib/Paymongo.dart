@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class PayMongoService {
-  final String secretKey = 'sk_test_XXUgpU8mDMCK8T7TvQPoNNg3';
+  final String secretKey = ''; // secret key
 
   // Function to create a payment link
   Future<String?> createPaymentLink({
